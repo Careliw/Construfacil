@@ -5,11 +5,12 @@ import { useSearchParams } from 'next/navigation';
 import type { PrintData } from '@/lib/types';
 import { formatCurrency, formatArea } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Printer } from 'lucide-react';
+import { Building, Printer } from 'lucide-react';
 
 export function PrintContent() {
     const searchParams = useSearchParams();
     const dataString = searchParams.get('data');
+    const currentDate = new Date().toLocaleDateString('pt-BR');
 
     const data: PrintData | null = useMemo(() => {
         if (!dataString) return null;
@@ -33,6 +34,7 @@ export function PrintContent() {
     }
     
     const cubValue = parseFloat(data.cub.replace(',', '.')) || 0;
+    const totalGeral = data.rows.reduce((acc, row) => acc + (row.valorCalculado || 0), 0);
 
     return (
         <>
@@ -43,58 +45,89 @@ export function PrintContent() {
                 </Button>
             </div>
 
-            <div className="print-container">
-                <header>ConstruFacil — Confirmação de Cálculo</header>
+            <div className="print-page">
+                <header className="print-header">
+                    <div className="logo-title">
+                        <Building className="logo-icon" />
+                        <div className="title-group">
+                            <h1 className="main-title">ConstruFacil</h1>
+                            <h2 className="subtitle">Calculadora de Averbação</h2>
+                        </div>
+                    </div>
+                    <div className="report-title">
+                        <h3>Memória de Cálculo</h3>
+                    </div>
+                </header>
 
-                <div className="info-grid">
-                  <div className="cub-info">
-                      <strong>CUB Utilizado:</strong> {formatCurrency(cubValue)}
-                  </div>
-                </div>
+                <main className="print-main">
+                    <div className="info-item">
+                        <span>CUB (Custo Unitário Básico) utilizado:</span>
+                        <span>{formatCurrency(cubValue)}</span>
+                    </div>
+                    
+                    <div className="separator-full"></div>
 
-                <table className="print-table">
-                    <thead>
-                        <tr>
-                            <th className='col-construcao'>Nº da Construção</th>
-                            <th className='col-tipo'>Tipo de Averbação</th>
-                            <th className='col-area'>Área Anterior (m²)</th>
-                            <th className='col-area'>Área Atual (m²)</th>
-                            <th className="col-formula">Fórmula do Cálculo</th>
-                            <th className='col-valor'>Valor (R$)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.rows.map(item => {
-                            const formula = item.type === "Construção Nova"
-                              ? `${formatArea(item.areaAtual)} × ${formatCurrency(cubValue, false)}`
-                              : `(${formatArea(item.areaAtual)} - ${formatArea(item.areaAnterior)}) × ${formatCurrency(cubValue, false)}`;
+                    {data.rows.map((item, index) => {
+                         const formula = item.type === "Construção Nova"
+                         ? `${formatArea(item.areaAtual)} m² × ${formatCurrency(cubValue)}`
+                         : `(${formatArea(item.areaAtual)} m² - ${formatArea(item.areaAnterior)} m²) × ${formatCurrency(cubValue)}`;
 
-                            return (
-                                <tr key={item.id}>
-                                    <td>{item.numeroConstrucao || '-'}</td>
-                                    <td>{item.type}</td>
-                                    <td className='text-right'>{formatArea(item.areaAnterior)}</td>
-                                    <td className='text-right'>{formatArea(item.areaAtual)}</td>
-                                    <td className="formula-col">{formula}</td>
-                                    <td className='text-right font-semibold'>{formatCurrency(item.valorCalculado)}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                
-                <div className="card-note">
-                    <h4 className="note-title">Observações Importantes</h4>
-                    <ul className="note-list">
-                        <li>Este cálculo não possui valor legal e serve apenas como uma ferramenta de auxílio.</li>
-                        <li>Confira se o valor do CUB corresponde ao mês de conclusão da obra.</li>
-                    </ul>
-                </div>
-                
+                        return (
+                            <div key={item.id} className="calculation-group">
+                                <div className="info-item">
+                                    <span className='font-semibold'>Item {index + 1}: {item.numeroConstrucao || 'Sem identificação'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span>Tipo de averbação:</span>
+                                    <span>{item.type}</span>
+                                </div>
+                                {item.type === 'Acréscimo' && (
+                                    <div className="info-item">
+                                        <span>Área anterior:</span>
+                                        <span>{formatArea(item.areaAnterior)} m²</span>
+                                    </div>
+                                )}
+                                <div className="info-item">
+                                    <span>Área atual:</span>
+                                    <span>{formatArea(item.areaAtual)} m²</span>
+                                </div>
+                                <div className="info-item">
+                                    <span>Fórmula do cálculo:</span>
+                                    <span className='text-sm text-gray-600'>{formula}</span>
+                                </div>
+
+                                <div className="separator-partial"></div>
+
+                                <div className="info-item result-item">
+                                    <span>Valor do item:</span>
+                                    <span className="font-bold">{formatCurrency(item.valorCalculado)}</span>
+                                </div>
+                                {index < data.rows.length - 1 && <div className="separator-full-dashed"></div>}
+                            </div>
+                        );
+                    })}
+
+                    <div className="separator-full"></div>
+
+                    <div className="total-section">
+                        <div className="info-item total-item">
+                            <span>Total Geral:</span>
+                            <span className="font-bold text-lg">{formatCurrency(totalGeral)}</span>
+                        </div>
+                    </div>
+                    
+                    <div className="notes-section">
+                        <p className="important-note">
+                            Esta memória de cálculo não possui valor legal.
+                        </p>
+                        <p className="secondary-note">
+                            Trata-se apenas de uma ferramenta de auxílio na elaboração de contas. Verifique se o valor do CUB corresponde ao mês vigente.
+                        </p>
+                    </div>
+                </main>
+
                 <footer className="print-footer">
-                    <div className="w-full border-t border-border/50 max-w-xs mx-auto mb-4"></div>
-                    <div>Desenvolvido por Wesley Careli · v1.1.0</div>
-                    <div className="text-xs text-muted-foreground/80">Todos os direitos reservados.</div>
+                    <span>Calculado em: {currentDate}</span>
                 </footer>
             </div>
         </>

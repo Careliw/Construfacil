@@ -141,15 +141,6 @@ body {
     color: #718096;
 }
 
-.print-footer {
-    text-align: center;
-    padding-top: 1.5rem;
-    margin-top: 1.5rem;
-    border-top: 1px solid #eee;
-    font-size: 0.75rem;
-    color: #a0aec0;
-}
-
 .error-card {
     text-align: center;
     background-color: #fff5f5;

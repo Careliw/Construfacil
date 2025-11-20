@@ -102,10 +102,6 @@ export function PrintContent() {
                         </p>
                     </div>
                 </main>
-
-                <footer className="print-footer">
-                    <span>ConstruFacil v1.1.0 | Todos os direitos reservados.</span>
-                </footer>
             </div>
         </>
     );

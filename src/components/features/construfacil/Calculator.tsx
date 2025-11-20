@@ -177,7 +177,7 @@ export function Calculator() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <Card className="border-2 border-border/70 shadow-lg">
         <CardHeader>
           <CardTitle>Valor do CUB (Custo Unitário Básico)</CardTitle>
@@ -236,25 +236,25 @@ export function Calculator() {
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Button onClick={addRow}>
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
+            <Button onClick={addRow} className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               Adicionar Linha
             </Button>
-            <Button onClick={clearAll} variant="destructive" disabled={rows.length <= 1 && rows.every(r => !r.numeroConstrucao && !r.areaAnterior && !r.areaAtual)}>
+            <Button onClick={clearAll} variant="destructive" className="w-full sm:w-auto" disabled={rows.length <= 1 && rows.every(r => !r.numeroConstrucao && !r.areaAnterior && !r.areaAtual)}>
               <Trash2 className="mr-2 h-4 w-4" />
               Limpar Tabela
             </Button>
           </div>
           <div className="overflow-x-auto">
-            <Table>
+            <Table className="min-w-[800px]">
               <TableHeader className="bg-muted/60">
                 <TableRow>
                   <TableHead className="w-[180px]">Nº da Construção</TableHead>
-                  <TableHead className="w-[220px]">Tipo de Averbação</TableHead>
-                  <TableHead>Área Anterior (m²)</TableHead>
-                  <TableHead>Área Atual (m²)</TableHead>
-                  <TableHead>Valor Calculado (R$)</TableHead>
+                  <TableHead className="w-[200px]">Tipo de Averbação</TableHead>
+                  <TableHead className="w-[150px]">Área Anterior (m²)</TableHead>
+                  <TableHead className="w-[150px]">Área Atual (m²)</TableHead>
+                  <TableHead className="w-[180px]">Valor Calculado (R$)</TableHead>
                   <TableHead className="text-right w-[140px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -279,7 +279,7 @@ export function Calculator() {
         </CardContent>
       </Card>
 
-      <div className="important-note flex items-start gap-4">
+      <div className="important-note flex items-start gap-3 md:gap-4">
         <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
         <div>
             <h4 className="font-bold">Observações Importantes</h4>

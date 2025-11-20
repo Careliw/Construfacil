@@ -46,10 +46,10 @@ export default function AjudaPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <header className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Guia Rápido</h1>
-        <Button asChild variant="outline">
+    <div className="container mx-auto px-4 py-6 md:py-8 max-w-4xl">
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Guia Rápido</h1>
+        <Button asChild variant="outline" className="w-full sm:w-auto">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar para a Calculadora
@@ -61,15 +61,15 @@ export default function AjudaPage() {
         {steps.map((step, index) => (
           <Card key={index} className="bg-card border-2 border-border/70 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold">
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-base sm:text-lg font-bold">
                 {index + 1}
               </div>
               <div className='pt-1'>
-                <CardTitle className="text-xl">{step.title}</CardTitle>
+                <CardTitle className="text-lg md:text-xl">{step.title}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground pl-14">{step.description}</p>
+              <p className="text-muted-foreground pl-12 sm:pl-14 text-sm md:text-base">{step.description}</p>
             </CardContent>
           </Card>
         ))}

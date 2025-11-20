@@ -115,7 +115,7 @@ export function Calculator() {
     <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>1. Valor do CUB (Custo Unitário Básico)</CardTitle>
+          <CardTitle>Valor do CUB (Custo Unitário Básico)</CardTitle>
           <CardDescription>Insira o valor do CUB para o mês vigente e salve para usar nos cálculos.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -141,7 +141,7 @@ export function Calculator() {
 
       <Card>
         <CardHeader>
-          <CardTitle>2. Lançamento de Averbações</CardTitle>
+          <CardTitle>Lançamento de Averbações</CardTitle>
           <CardDescription>Adicione, remova e preencha as informações de cada averbação.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -218,6 +218,7 @@ export function Calculator() {
                 )) : (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">Nenhuma linha adicionada. Clique em "Adicionar Linha".</TableCell>
+  
                   </TableRow>
                 )}
               </TableBody>

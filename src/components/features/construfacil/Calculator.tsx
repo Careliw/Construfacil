@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { AverbacaoRow } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -25,7 +25,6 @@ export function Calculator() {
     if (savedCub) {
       setCub(savedCub);
     }
-    // Adiciona uma linha inicial se a tabela estiver vazia
     if (rows.length === 0) {
       addRow();
     }
@@ -88,8 +87,22 @@ export function Calculator() {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
+  const sanitizeAreaInput = (value: string) => {
+    // remove caracteres inválidos
+    let clean = value.replace(/[^0-9,]/g, '');
+
+    // impedir mais de uma vírgula
+    clean = clean.replace(/(,.*),/g, '$1');
+
+    // limitar a parte decimal a no máximo 3 dígitos
+    clean = clean.replace(/^(\d+),(.*)$/g, (match, intPart, decPart) => {
+      return intPart + ',' + decPart.substring(0, 3);
+    });
+
+    return clean;
+  };
+
   if (!isClient) {
-    // Renderiza um skeleton/placeholder enquanto o componente não está montado no cliente
     return (
         <div className="space-y-8 animate-pulse">
             <Card><CardHeader><div className="h-8 bg-muted rounded w-1/2"></div></CardHeader><CardContent><div className="h-10 bg-muted rounded w-1/3"></div></CardContent></Card>
@@ -171,7 +184,10 @@ export function Calculator() {
                       <Input
                         type="text"
                         value={row.areaAnterior}
-                        onChange={(e) => handleRowChange(row.id, 'areaAnterior', e.target.value)}
+                        onChange={(e) => {
+                          const value = sanitizeAreaInput(e.target.value);
+                          handleRowChange(row.id, 'areaAnterior', value);
+                        }}
                         disabled={row.type !== 'Acréscimo'}
                         placeholder="0,00"
                       />
@@ -180,7 +196,10 @@ export function Calculator() {
                       <Input
                         type="text"
                         value={row.areaAtual}
-                        onChange={(e) => handleRowChange(row.id, 'areaAtual', e.target.value)}
+                        onChange={(e) => {
+                          const value = sanitizeAreaInput(e.target.value);
+                          handleRowChange(row.id, 'areaAtual', value);
+                        }}
                         placeholder="0,00"
                       />
                     </TableCell>

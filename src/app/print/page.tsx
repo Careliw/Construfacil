@@ -108,7 +108,7 @@ function PrintContent() {
                     </ul>
                 </div>
 
-                <footer>Desenvolvido por Wesley Careli</footer>
+                <footer className="w-full border-t border-neutral-300 mt-10 mb-3 opacity-60">Desenvolvido por Wesley Careli</footer>
             </div>
         </>
     );

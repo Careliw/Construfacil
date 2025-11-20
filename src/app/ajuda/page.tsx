@@ -1,137 +1,74 @@
 "use client";
 
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
 
 export default function AjudaPage() {
+  const steps = [
+    {
+      title: "Passo 1: Insira o Valor do CUB",
+      description: "No primeiro campo da calculadora, digite o valor do CUB (Custo Unitário Básico) para o mês atual. Este valor é a base para todos os cálculos."
+    },
+    {
+      title: "Passo 2: Salve o CUB",
+      description: "Clique no botão 'Salvar CUB'. O valor ficará guardado no seu navegador, e a calculadora usará esse número para os cálculos automáticos das obras."
+    },
+    {
+      title: "Passo 3: Adicione Linhas de Averbação",
+      description: "Clique em 'Adicionar Linha' para cada obra que deseja calcular (uma construção nova, um acréscimo, etc.)."
+    },
+    {
+      title: "Passo 4: Preencha os Dados da Obra",
+      description: "Para cada linha, selecione o 'Tipo' (Construção Nova ou Acréscimo) e preencha as áreas 'Anterior' e 'Atual' em metros quadrados (m²)."
+    },
+    {
+      title: "Passo 5: Veja o Valor Calculado",
+      description: "O valor final para cada obra aparecerá automaticamente na coluna 'Valor Calculado', baseado na fórmula: (Área Atual - Área Anterior) × CUB."
+    },
+    {
+      title: "Passo 6: Utilize as Ações",
+      description: "Use os botões de ação para 'Copiar' o valor calculado ou para 'Excluir' uma linha da tabela."
+    }
+  ];
+
   return (
-    <>
-      <style jsx global>{`
-        .dashboard-grid {
-          display: grid;
-          grid-template-columns: repeat(1, 1fr);
-          gap: 1.5rem;
-        }
-        @media (min-width: 768px) {
-          .dashboard-grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
-        }
-        .card-label {
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: hsl(var(--foreground));
-          display: block;
-          margin-bottom: 0.5rem;
-        }
-        .card-wide {
-           grid-column: 1 / -1;
-        }
-        .dashboard-card-content h3 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            line-height: 1.1;
-            color: hsl(var(--primary));
-        }
-         .dashboard-card-content p {
-            font-size: 0.9rem;
-            color: hsl(var(--muted-foreground));
-         }
-         .dashboard-card-content ul {
-            list-style: none;
-            padding: 0;
-         }
-         .dashboard-card-content ul li {
-            padding: 0.25rem 0;
-            font-size: 0.95rem;
-            color: hsl(var(--foreground));
-            display: flex;
-            align-items: center;
-         }
-         .dashboard-card-content ul li::before {
-            content: '✔';
-            color: hsl(var(--primary));
-            margin-right: 0.5rem;
-            font-weight: bold;
-         }
-      `}</style>
-      <div className="container mx-auto px-4 py-8">
-        <header className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold font-headline">Central de Ajuda</h1>
-          <Button asChild variant="outline">
-            <Link href="/">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar para a Calculadora
-            </Link>
-          </Button>
-        </header>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold">Guia Rápido</h1>
+        <Button asChild variant="outline">
+          <Link href="/">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar para a Calculadora
+          </Link>
+        </Button>
+      </header>
 
-        <section id="ajuda-dashboard" className="py-4">
-            <h2 className="text-2xl font-semibold mb-6">Demonstração do Dashboard</h2>
-
-            <div className="dashboard-grid">
-                <Card>
-                    <CardContent className="pt-6 dashboard-card-content">
-                        <span className="card-label">→ (1) Valor do CUB</span>
-                        <h3>R$ 2.580,40</h3>
-                        <p>Valor base para cálculos</p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                     <CardContent className="pt-6 dashboard-card-content">
-                        <span className="card-label">→ (2) Total Calculado</span>
-                        <h3>R$ 245.138,00</h3>
-                        <p>Soma de todas as averbações</p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardContent className="pt-6 dashboard-card-content">
-                        <span className="card-label">→ (3) Linhas Adicionadas</span>
-                        <h3>5</h3>
-                        <p>Total de obras na tabela</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="card-wide">
-                    <CardContent className="pt-6 dashboard-card-content">
-                        <span className="card-label">→ (4) Detalhes da Averbação</span>
-                        <p className="text-sm text-muted-foreground mb-4">Abaixo uma simulação da tabela de cálculo, onde cada linha representa uma obra.</p>
-                         <Table>
-                            <TableHeader>
-                                <TableRow>
-                                <TableHead>Tipo</TableHead>
-                                <TableHead>Área Anterior</TableHead>
-                                <TableHead>Área Atual</TableHead>
-                                <TableHead>Valor Calculado</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell>Acréscimo</TableCell>
-                                    <TableCell>120,00 m²</TableCell>
-                                    <TableCell>155,50 m²</TableCell>
-                                    <TableCell>R$ 91.604,20</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Construção Nova</TableCell>
-                                    <TableCell>0,00 m²</TableCell>
-                                    <TableCell>60,00 m²</TableCell>
-                                    <TableCell>R$ 154.824,00</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
-            </div>
-        </section>
-
-      </div>
-    </>
+      <Card>
+        <CardHeader>
+          <CardTitle>Como usar a Calculadora de Averbação</CardTitle>
+          <CardDescription>Siga os passos abaixo para realizar seus cálculos de forma simples e correta.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-start gap-4">
+                <div className="flex flex-col items-center">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                    {index + 1}
+                  </div>
+                  {index < steps.length - 1 && <div className="mt-2 w-px flex-grow bg-border" />}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">{step.title}</h3>
+                  <p className="text-muted-foreground mt-1">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

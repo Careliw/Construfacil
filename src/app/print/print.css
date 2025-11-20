@@ -1,0 +1,261 @@
+body {
+    background-color: #f0f2f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.header {
+    text-align: center;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.title {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #0056b3;
+    margin: 0;
+}
+
+.card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.card-title {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #343a40;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: center;
+}
+
+.summary-grid div {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-grid span {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-bottom: 4px;
+}
+
+.summary-grid strong {
+    font-size: 1.3em;
+    font-weight: 700;
+}
+
+.total-value {
+    text-align: right;
+    color: #28a745;
+}
+
+.detail-item {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.item-header .icon {
+    width: 20px;
+    height: 20px;
+    color: #007bff;
+}
+
+.item-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    padding-left: 30px;
+}
+
+.item-grid div {
+    font-size: 0.95em;
+}
+.item-grid span {
+    color: #6c757d;
+}
+.item-grid strong {
+    font-weight: 600;
+}
+
+.formula-card .formula-item {
+    margin-bottom: 10px;
+}
+.formula-card h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+.formula-card code {
+    background-color: #e9ecef;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.95em;
+    color: #c7254e;
+}
+
+
+.card-note {
+    background: #fff3cd;
+    border-left: 5px solid #ffc107;
+    padding: 15px;
+    border-radius: 6px;
+    color: #664d03;
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.card-note .icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.note-title {
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.note-list {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+    font-size: 0.85em;
+    color: #6c757d;
+}
+
+.error-card {
+    text-align: center;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+
+    body {
+        background-color: #ffffff;
+        font-size: 10pt;
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .header, .footer {
+        text-align: center;
+    }
+
+    .header {
+        border-bottom: 1px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      border-top: 1px solid #000;
+      padding: 5px 0;
+      font-size: 8pt;
+    }
+    
+    .card {
+        border: 1px solid #aaa;
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+
+    .card-title {
+        border-bottom-color: #ccc;
+    }
+    
+    .card-note {
+        background: #eee !important;
+        border-left-color: #888 !important;
+        color: #000 !important;
+    }
+
+    code {
+        background: #eee !important;
+        color: #000 !important;
+    }
+
+    .summary-grid strong, .total-value {
+        color: #000 !important;
+    }
+    
+    * {
+       -webkit-print-color-adjust: exact !important;
+       print-color-adjust: exact !important;
+    }
+}

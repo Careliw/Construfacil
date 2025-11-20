@@ -3,5 +3,12 @@ export interface AverbacaoRow {
   type: 'Construção Nova' | 'Acréscimo';
   areaAnterior: string;
   areaAtual: string;
-  valorCalculado?: number; // Tornando opcional, já que o cálculo é feito separadamente
+  valorCalculado?: number;
+  valorCalculadoFmt?: string;
+}
+
+export interface PrintData {
+  rows: AverbacaoRow[];
+  cub: string;
+  totalCalculadoFmt: string;
 }

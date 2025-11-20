@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import type { AverbacaoRow } from '@/lib/types';
+import type { AverbacaoRow, PrintData } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Save, Plus, Trash2, X, Copy, AlertCircle } from 'lucide-react';
+import { Save, Plus, Trash2, X, Copy, AlertCircle, Printer } from 'lucide-react';
 
 const CUB_STORAGE_KEY = 'construfacil_cub';
 
@@ -95,6 +95,34 @@ export function Calculator() {
     });
     return clean;
   };
+  
+  const totalCalculado = useMemo(() => {
+    return calculatedRows.reduce((acc, row) => acc + (row.valorCalculado || 0), 0);
+  }, [calculatedRows]);
+
+  const handleOpenPrint = () => {
+    if (cubValue <= 0) {
+      toast({ title: "Impressão Bloqueada", description: "Salve um valor de CUB válido para poder imprimir.", variant: "destructive" });
+      return;
+    }
+    if (totalCalculado <= 0) {
+      toast({ title: "Impressão Bloqueada", description: "É preciso ter ao menos um cálculo com valor maior que zero para imprimir.", variant: "destructive" });
+      return;
+    }
+
+    const data: PrintData = {
+      rows: calculatedRows.map(row => ({
+        ...row,
+        valorCalculadoFmt: formatCurrency(row.valorCalculado || 0)
+      })),
+      cub,
+      totalCalculadoFmt: formatCurrency(totalCalculado)
+    };
+    
+    const params = new URLSearchParams();
+    params.set('data', JSON.stringify(data));
+    window.open(`/print?${params.toString()}`, "_blank");
+  };
 
   if (!isClient) {
     return (
@@ -134,9 +162,15 @@ export function Calculator() {
       </Card>
 
       <Card className="border-2 border-border/70">
-        <CardHeader>
-          <CardTitle>Lançamento de Averbações</CardTitle>
-          <CardDescription>Adicione, remova e preencha as informações de cada averbação.</CardDescription>
+        <CardHeader className='flex-row items-center justify-between'>
+          <div>
+            <CardTitle>Lançamento de Averbações</CardTitle>
+            <CardDescription>Adicione, remova e preencha as informações de cada averbação.</CardDescription>
+          </div>
+          <Button onClick={handleOpenPrint} variant="outline" className="shrink-0">
+            <Printer className="mr-2 h-4 w-4" />
+            Imprimir Cálculo
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2 mb-4">
@@ -218,6 +252,11 @@ export function Calculator() {
               </TableBody>
             </Table>
           </div>
+           {totalCalculado > 0 && (
+            <div className="mt-6 text-right">
+              <p className="text-lg font-bold">Total Geral: {formatCurrency(totalCalculado)}</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

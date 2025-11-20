@@ -44,15 +44,15 @@ const helpSteps = [
 const Step = ({ number, text, value, position }: { number: number; text: string; value: string; position: string; }) => (
   <div className={`absolute ${position} w-52 transform`}>
       <AccordionItem value={value} className="border-none">
-          <AccordionTrigger>
+          <AccordionTrigger hideChevron className="p-0 hover:no-underline justify-center">
                <div className="relative flex items-start gap-3">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-lg shadow-lg">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-lg shadow-lg cursor-pointer">
                       {number}
                   </div>
               </div>
           </AccordionTrigger>
           <AccordionContent>
-              <div className="p-3 bg-card/90 backdrop-blur-sm rounded-lg shadow-lg border border-primary/20">
+              <div className="mt-2 p-3 bg-card/90 backdrop-blur-sm rounded-lg shadow-lg border border-primary/20">
                   <p className="text-sm text-card-foreground">{text}</p>
               </div>
           </AccordionContent>

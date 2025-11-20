@@ -123,15 +123,20 @@ body {
 
 @media print {
     @page {
-        size: auto;
-        margin: 10mm;
+        margin: 0;
     }
 
     body {
         margin: 0;
-        padding: 0;
+        padding: 20mm;
         background: #ffffff !important;
         font-size: 9pt;
+    }
+
+    body::before,
+    body::after {
+      display: none !important;
+      content: none !important;
     }
 
     .print-button {

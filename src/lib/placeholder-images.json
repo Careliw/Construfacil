@@ -1,0 +1,10 @@
+{
+  "placeholderImages": [
+    {
+      "id": "ajuda-dashboard",
+      "description": "Screenshot of the calculator dashboard for the help page.",
+      "imageUrl": "https://i.imgur.com/T879sEy.png",
+      "imageHint": "dashboard screenshot"
+    }
+  ]
+}

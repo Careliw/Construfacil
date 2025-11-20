@@ -1,0 +1,130 @@
+body {
+    background-color: #e9eef2;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.print-actions {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    z-index: 100;
+}
+
+.print-page {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 2rem auto;
+    padding: 15mm;
+    box-sizing: border-box;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    color: #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.print-main {
+    flex-grow: 1;
+    font-size: 0.9rem;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.75rem;
+}
+
+.calculation-section {
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+}
+
+.info-item-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 6px 0;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.calculation-group {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.calculation-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.notes-section {
+    margin-top: auto;
+    padding-top: 2rem;
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.notes-section .important-note,
+.notes-section .secondary-note {
+    font-weight: normal;
+    color: #444;
+    margin: 0 auto;
+    max-width: 80%;
+}
+
+.notes-section .secondary-note {
+    margin-top: 0.25rem;
+    color: #718096;
+}
+
+.error-card {
+    text-align: center;
+    background-color: #fff5f5;
+    border: 1px solid #ffc9c9;
+    color: #c92a2a;
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    max-width: 600px;
+    margin: 4rem auto;
+}
+
+
+@media print {
+    body {
+        background-color: #fff;
+        margin: 0;
+    }
+    
+    .print-actions {
+        display: none;
+    }
+    
+    .print-page {
+        margin: 0;
+        box-shadow: none;
+        width: 100%;
+        min-height: 100vh;
+        padding: 12mm;
+    }
+
+    * {
+       -webkit-print-color-adjust: exact !important;
+       print-color-adjust: exact !important;
+    }
+}

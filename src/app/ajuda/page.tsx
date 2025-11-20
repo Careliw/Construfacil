@@ -53,17 +53,19 @@ export default function AjudaPage() {
         </Button>
       </header>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {steps.map((step, index) => (
-          <Card key={index} className="bg-card">
-            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+          <Card key={index} className="bg-card border-2 border-border/70 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold">
                 {index + 1}
               </div>
-              <CardTitle className="text-xl">{step.title}</CardTitle>
+              <div className='pt-1'>
+                <CardTitle className="text-xl">{step.title}</CardTitle>
+              </div>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground pl-12">{step.description}</p>
+              <p className="text-muted-foreground pl-14">{step.description}</p>
             </CardContent>
           </Card>
         ))}

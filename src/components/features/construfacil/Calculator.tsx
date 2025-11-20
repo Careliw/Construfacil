@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import type { AverbacaoRow, PrintData } from '@/lib/types';
+import type { AverbacaoRow, PrintData, UserConfig } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,14 +10,19 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Save, Plus, Trash2, X, Copy, AlertCircle, Printer, Layers } from 'lucide-react';
+import { doc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
 
 const CUB_STORAGE_KEY = 'construfacil_cub';
 
 export function Calculator() {
   const [cub, setCub] = useState('');
   const [rows, setRows] = useState<AverbacaoRow[]>([]);
+  const [usuarioResponsavel, setUsuarioResponsavel] = useState('');
+  const [savedUsuarioResponsavel, setSavedUsuarioResponsavel] = useState<string | null>(null);
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
+  const firestore = useFirestore();
 
   useEffect(() => {
     setIsClient(true);
@@ -29,6 +34,23 @@ export function Calculator() {
       addRow();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (firestore) {
+      const userConfigDocRef = doc(firestore, 'configuracoesGlobais', 'usuario');
+      const unsubscribe = onSnapshot(userConfigDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const userData = docSnap.data() as UserConfig;
+          setUsuarioResponsavel(userData.name);
+          setSavedUsuarioResponsavel(userData.name);
+        } else {
+          setSavedUsuarioResponsavel(null);
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [firestore]);
+
 
   const cubValue = useMemo(() => parseFloat(cub.replace(',', '.')) || 0, [cub]);
 
@@ -49,6 +71,24 @@ export function Calculator() {
       return { ...row, valorCalculado: valor };
     });
   }, [rows, cubValue]);
+
+  const handleSaveUsuarioResponsavel = async () => {
+    if (!firestore) {
+      toast({ title: "Erro", description: "O banco de dados não está disponível.", variant: "destructive" });
+      return;
+    }
+    if (!usuarioResponsavel.trim()) {
+      toast({ title: "Nome Inválido", description: "Por favor, insira um nome válido.", variant: "destructive" });
+      return;
+    }
+    try {
+      const userConfigDocRef = doc(firestore, 'configuracoesGlobais', 'usuario');
+      await setDoc(userConfigDocRef, { name: usuarioResponsavel.trim() });
+      toast({ title: "Sucesso", description: "Nome salvo com sucesso!" });
+    } catch (error) {
+      toast({ title: "Erro ao Salvar", description: "Não foi possível salvar o nome.", variant: "destructive" });
+    }
+  };
 
   const handleSaveCub = () => {
     if (cubValue <= 0) {
@@ -130,6 +170,10 @@ export function Calculator() {
   };
 
   const handleOpenPrint = () => {
+    if (!savedUsuarioResponsavel) {
+      toast({ title: "Impressão Bloqueada", description: "Para imprimir o cálculo, primeiro preencha seu nome e clique no botão de salvar (disquete).", variant: "destructive" });
+      return;
+    }
     const totalCalculado = calculatedRows.reduce((acc, row) => acc + (row.valorCalculado || 0), 0);
     if (cubValue <= 0) {
       toast({ title: "Impressão Bloqueada", description: "Salve um valor de CUB válido para poder imprimir.", variant: "destructive" });
@@ -145,7 +189,8 @@ export function Calculator() {
         ...row,
         valorCalculadoFmt: formatCurrency(row.valorCalculado || 0)
       })),
-      cub
+      cub,
+      usuarioResponsavel: savedUsuarioResponsavel
     };
     
     const params = new URLSearchParams();
@@ -166,10 +211,27 @@ export function Calculator() {
     <div className="space-y-8">
       <Card className="border-2 border-border/70 shadow-lg">
         <CardHeader>
-          <CardTitle>Valor do CUB (Custo Unitário Básico)</CardTitle>
-          <CardDescription>Insira o valor do CUB para o mês vigente e salve para usar nos cálculos.</CardDescription>
+          <CardTitle>Configurações Globais</CardTitle>
+          <CardDescription>Defina o usuário responsável e o CUB para os cálculos.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
+          <div className="flex flex-col sm:flex-row items-end gap-4">
+            <div className="w-full sm:w-auto flex-grow">
+              <Label htmlFor="user-input">Usuário Responsável</Label>
+              <Input
+                id="user-input"
+                type="text"
+                value={usuarioResponsavel}
+                onChange={(e) => setUsuarioResponsavel(e.target.value)}
+                placeholder="Seu nome completo"
+                className="text-lg"
+              />
+            </div>
+            <Button onClick={handleSaveUsuarioResponsavel} className="w-full sm:w-auto">
+              <Save className="mr-2 h-4 w-4" />
+              Salvar Usuário
+            </Button>
+          </div>
           <div className="flex flex-col sm:flex-row items-end gap-4">
             <div className="w-full sm:w-auto flex-grow">
               <Label htmlFor="cub-input">Valor do CUB (R$)</Label>

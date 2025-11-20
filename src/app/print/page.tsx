@@ -26,6 +26,11 @@ function PrintContent() {
                 cubValueEl.textContent = parseFloat(data.cub.replace(',', '.')).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
             }
 
+            const responsavelEl = document.getElementById("responsavelValue");
+            if (responsavelEl && data.usuarioResponsavel) {
+                responsavelEl.textContent = data.usuarioResponsavel;
+            }
+
             const tbody = document.getElementById("tabelaAverbacoes");
             if (tbody) {
                 tbody.innerHTML = "";
@@ -80,8 +85,13 @@ function PrintContent() {
             <div className="print-container" id="printArea" ref={printAreaRef}>
                 <header>ConstruFacil — Confirmação de Cálculo</header>
 
-                <div className="cub-info">
-                    <strong>CUB Utilizado:</strong> R$ <span id="cubValue"></span>
+                <div className="info-grid">
+                  <div className="cub-info">
+                      <strong>CUB Utilizado:</strong> R$ <span id="cubValue"></span>
+                  </div>
+                  <div className="responsavel-info">
+                      <strong>Responsável pelo Cálculo:</strong> <span id="responsavelValue"></span>
+                  </div>
                 </div>
 
                 <table>

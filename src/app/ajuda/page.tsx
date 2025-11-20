@@ -8,23 +8,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 export default function AjudaPage() {
   const steps = [
     {
-      title: "Passo 1: Insira o Valor do CUB",
-      description: "No primeiro campo da calculadora, digite o valor do CUB (Custo Unitário Básico) para o mês atual. Este valor é a base para todos os cálculos."
+      title: "Passo 1: Salve o Usuário Responsável",
+      description: "No primeiro campo da calculadora, preencha o seu nome completo e clique no botão 'Salvar Usuário'. Este passo é obrigatório para liberar a impressão do cálculo."
     },
     {
-      title: "Passo 2: Salve o CUB",
+      title: "Passo 2: Insira o Valor do CUB",
+      description: "No segundo campo da calculadora, digite o valor do CUB (Custo Unitário Básico) para o mês atual. Este valor é a base para todos os cálculos."
+    },
+    {
+      title: "Passo 3: Salve o CUB",
       description: "Clique no botão 'Salvar CUB'. O valor ficará guardado no seu navegador, e a calculadora usará esse número para os cálculos automáticos das obras."
     },
     {
-      title: "Passo 3: Adicione Linhas de Averbação",
+      title: "Passo 4: Adicione Linhas de Averbação",
       description: "Clique em 'Adicionar Linha' para cada obra que deseja calcular (uma construção nova, um acréscimo, etc.). Você pode adicionar quantas linhas precisar."
     },
     {
-      title: "Passo 4: Preencha os Dados da Obra",
+      title: "Passo 5: Preencha os Dados da Obra",
       description: "Para cada linha, selecione o 'Tipo' (Construção Nova ou Acréscimo) e preencha as áreas 'Anterior' e 'Atual' em metros quadrados (m²)."
     },
     {
-      title: "Passo 5: Veja o Valor Calculado",
+      title: "Passo 6: Veja o Valor Calculado",
       description: (
         <span>
           O valor final para cada obra aparecerá automaticamente. As fórmulas são:
@@ -36,7 +40,7 @@ export default function AjudaPage() {
       ),
     },
     {
-      title: "Passo 6: Utilize as Ações",
+      title: "Passo 7: Utilize as Ações",
       description: "Use os botões de ação para 'Copiar' o valor calculado de uma linha ou para 'Excluir' a linha da tabela."
     }
   ];

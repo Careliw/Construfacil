@@ -47,9 +47,15 @@ body {
     margin-bottom: 25px;
 }
 
-.cub-info {
-    font-size: 14px;
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
     margin-bottom: 25px;
+}
+
+.cub-info, .responsavel-info {
+    font-size: 14px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -158,10 +164,14 @@ body {
       border-bottom: 1px solid #000;
     }
 
-    .cub-info {
+    .info-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .cub-info, .responsavel-info {
         text-align: left;
         width: auto;
-        margin: 20px 0;
+        margin: 10px 0;
     }
 
     .print-container table {

@@ -107,8 +107,6 @@ function PrintContent() {
                         <li>Verifique se o valor do CUB está atualizado, correspondendo ao mês vigente.</li>
                     </ul>
                 </div>
-
-                <footer className="w-full border-t border-neutral-300 mt-10 pt-3 text-center text-xs text-neutral-500">Desenvolvido por Wesley Careli</footer>
             </div>
         </>
     );

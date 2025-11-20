@@ -70,6 +70,7 @@ export function Calculator() {
   const clearAll = () => {
     if (rows.length > 0) {
       setRows([]);
+      addRow();
       toast({ title: "Tabela Limpa", description: "Todas as linhas foram removidas." });
     }
   };
@@ -83,25 +84,28 @@ export function Calculator() {
     toast({ title: "Copiado!", description: `Valor R$ ${value.toFixed(2)} copiado para a área de transferência.` });
   };
   
-  const handleDuplicateAreas = (currentRowId: string, rowIndex: number) => {
-    if (rowIndex === 0) {
-      toast({ title: "Ação Bloqueada", description: "Não há linha anterior para duplicar as áreas.", variant: "destructive" });
-      return;
-    }
-    const previousRow = rows[rowIndex - 1];
-    setRows(prevRows =>
-      prevRows.map(row => {
-        if (row.id === currentRowId) {
-          return {
-            ...row,
-            areaAnterior: previousRow.areaAnterior,
-            areaAtual: previousRow.areaAtual,
-          };
-        }
-        return row;
-      })
-    );
-     toast({ title: "Áreas Duplicadas", description: "Os valores de área da linha anterior foram copiados." });
+  const handleDuplicateRow = (sourceRowId: string) => {
+    const sourceRowIndex = rows.findIndex(row => row.id === sourceRowId);
+    if (sourceRowIndex === -1) return;
+
+    const sourceRow = rows[sourceRowIndex];
+    
+    const newRow: AverbacaoRow = {
+      id: crypto.randomUUID(),
+      numeroConstrucao: '',
+      type: sourceRow.type,
+      areaAnterior: sourceRow.areaAnterior,
+      areaAtual: sourceRow.areaAtual,
+    };
+
+    const newRows = [
+      ...rows.slice(0, sourceRowIndex + 1),
+      newRow,
+      ...rows.slice(sourceRowIndex + 1),
+    ];
+    
+    setRows(newRows);
+    toast({ title: "Linha Duplicada", description: "Uma nova linha foi criada com as áreas da linha original." });
   };
 
   const formatCurrency = (value: number) => {
@@ -109,16 +113,11 @@ export function Calculator() {
   };
   
   const sanitizeAreaInput = (value: string) => {
-    // Remove caracteres inválidos, exceto números e vírgula
     let clean = value.replace(/[^0-9,]/g, '');
-    
-    // Garante que haja apenas uma vírgula
     const parts = clean.split(',');
     if (parts.length > 2) {
       clean = parts[0] + ',' + parts.slice(1).join('');
     }
-    
-    // Limita a 5 dígitos antes da vírgula e 3 depois
     const match = clean.match(/^(\d{0,5})(,(\d{0,3}))?/);
     if (match) {
       return match[0];
@@ -178,12 +177,12 @@ export function Calculator() {
                 id="cub-input"
                 type="text"
                 value={cub}
-                onChange={(e) => setCub(e.target.value)}
+                onChange={(e) => setCub(sanitizeAreaInput(e.target.value))}
                 placeholder="Ex: 2500,50"
                 className="text-lg"
               />
             </div>
-            <Button onClick={handleSaveCub} className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button onClick={handleSaveCub} className="w-full sm:w-auto">
               <Save className="mr-2 h-4 w-4" />
               Salvar CUB
             </Button>
@@ -197,18 +196,18 @@ export function Calculator() {
             <CardTitle>Lançamento de Averbações</CardTitle>
             <CardDescription>Adicione, remova e preencha as informações de cada averbação.</CardDescription>
           </div>
-          <Button onClick={handleOpenPrint} variant="outline" className="shrink-0 hover:bg-accent hover:text-accent-foreground">
+          <Button onClick={handleOpenPrint} variant="outline" className="shrink-0">
             <Printer className="mr-2 h-4 w-4" />
             Imprimir Cálculo
           </Button>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2 mb-4">
-            <Button onClick={addRow} className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button onClick={addRow}>
               <Plus className="mr-2 h-4 w-4" />
               Adicionar Linha
             </Button>
-            <Button onClick={clearAll} variant="destructive" disabled={rows.length === 0} className="hover:bg-destructive/90">
+            <Button onClick={clearAll} variant="destructive" disabled={rows.length === 0}>
               <X className="mr-2 h-4 w-4" />
               Limpar Tudo
             </Button>
@@ -278,7 +277,7 @@ export function Calculator() {
                     <TableCell className="font-semibold text-lg">{formatCurrency(row.valorCalculado || 0)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end items-center gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => handleDuplicateAreas(row.id, index)} className="text-blue-600 hover:text-blue-800 hover:bg-blue-100" title="Duplicar áreas da linha anterior">
+                        <Button size="icon" variant="ghost" onClick={() => handleDuplicateRow(row.id)} className="text-blue-600 hover:text-blue-800 hover:bg-blue-100" title="Duplicar linha abaixo">
                           <Layers className="h-4 w-4" />
                         </Button>
                         <Button size="icon" variant="ghost" onClick={() => handleCopyValue(row.valorCalculado || 0)} className="text-accent hover:text-accent-foreground hover:bg-accent/90" title="Copiar valor">

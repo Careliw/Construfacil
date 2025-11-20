@@ -3,5 +3,5 @@ export interface AverbacaoRow {
   type: 'Construção Nova' | 'Acréscimo';
   areaAnterior: string;
   areaAtual: string;
-  valorCalculado: number;
+  valorCalculado?: number; // Tornando opcional, já que o cálculo é feito separadamente
 }

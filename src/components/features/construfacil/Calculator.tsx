@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { AverbacaoRow } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -25,53 +25,43 @@ export function Calculator() {
     if (savedCub) {
       setCub(savedCub);
     }
+    // Adiciona uma linha inicial se a tabela estiver vazia
     if (rows.length === 0) {
       addRow();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const calculateAllRows = useCallback(() => {
-    const cubValue = parseFloat(cub.replace(',', '.')) || 0;
+  const cubValue = useMemo(() => parseFloat(cub.replace(',', '.')) || 0, [cub]);
 
-    setRows(currentRows =>
-      currentRows.map(row => {
-        const areaAnterior = parseFloat(row.areaAnterior.replace(',', '.')) || 0;
-        const areaAtual = parseFloat(row.areaAtual.replace(',', '.')) || 0;
-        let valor = 0;
-        
-        if (cubValue > 0) {
-            if (row.type === 'Construção Nova') {
-              if (areaAtual > 0) valor = areaAtual * cubValue;
-            } else if (row.type === 'Acréscimo') {
-              if (areaAtual > areaAnterior) valor = (areaAtual - areaAnterior) * cubValue;
-            }
-        }
-        
-        return { ...row, valorCalculado: valor };
-      })
-    );
-  }, [cub]);
+  const calculatedRows = useMemo(() => {
+    if (cubValue <= 0) return rows.map(row => ({ ...row, valorCalculado: 0 }));
 
-  useEffect(() => {
-    if (isClient) {
-      calculateAllRows();
-    }
-  }, [cub, rows.map(r => `${r.type}-${r.areaAnterior}-${r.areaAtual}`).join(','), calculateAllRows, isClient]);
-
+    return rows.map(row => {
+      const areaAnterior = parseFloat(row.areaAnterior.replace(',', '.')) || 0;
+      const areaAtual = parseFloat(row.areaAtual.replace(',', '.')) || 0;
+      let valor = 0;
+      
+      if (row.type === 'Construção Nova') {
+        if (areaAtual > 0) valor = areaAtual * cubValue;
+      } else if (row.type === 'Acréscimo') {
+        if (areaAtual > areaAnterior) valor = (areaAtual - areaAnterior) * cubValue;
+      }
+      
+      return { ...row, valorCalculado: valor };
+    });
+  }, [rows, cubValue]);
 
   const handleSaveCub = () => {
-    const cubValue = parseFloat(cub.replace(',', '.')) || 0;
     if (cubValue <= 0) {
       toast({ title: "Valor Inválido", description: "Por favor, insira um valor de CUB positivo.", variant: "destructive" });
       return;
     }
     localStorage.setItem(CUB_STORAGE_KEY, cub);
     toast({ title: "Sucesso", description: "Valor do CUB salvo no navegador!" });
-    calculateAllRows();
   };
 
   const addRow = () => {
-    setRows(prevRows => [...prevRows, { id: Date.now(), type: 'Construção Nova', areaAnterior: '', areaAtual: '', valorCalculado: 0 }]);
+    setRows(prevRows => [...prevRows, { id: Date.now(), type: 'Construção Nova', areaAnterior: '', areaAtual: '' }]);
   };
 
   const removeRow = (id: number) => {
@@ -79,11 +69,13 @@ export function Calculator() {
   };
   
   const clearAll = () => {
-    setRows([]);
-    toast({ title: "Tabela Limpa", description: "Todas as linhas foram removidas." });
+    if (rows.length > 0) {
+      setRows([]);
+      toast({ title: "Tabela Limpa", description: "Todas as linhas foram removidas." });
+    }
   };
 
-  const handleRowChange = (id: number, field: keyof AverbacaoRow, value: string | number) => {
+  const handleRowChange = (id: number, field: keyof Omit<AverbacaoRow, 'id' | 'valorCalculado'>, value: string) => {
     setRows(prevRows => prevRows.map(row => (row.id === id ? { ...row, [field]: value } : row)));
   };
 
@@ -96,7 +88,15 @@ export function Calculator() {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  if (!isClient) return null;
+  if (!isClient) {
+    // Renderiza um skeleton/placeholder enquanto o componente não está montado no cliente
+    return (
+        <div className="space-y-8 animate-pulse">
+            <Card><CardHeader><div className="h-8 bg-muted rounded w-1/2"></div></CardHeader><CardContent><div className="h-10 bg-muted rounded w-1/3"></div></CardContent></Card>
+            <Card><CardHeader><div className="h-8 bg-muted rounded w-1/2"></div></CardHeader><CardContent><div className="h-10 bg-muted rounded w-1/3"></div></CardContent></Card>
+        </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -137,7 +137,7 @@ export function Calculator() {
               <Plus className="mr-2 h-4 w-4" />
               Adicionar Linha
             </Button>
-            <Button onClick={clearAll} variant="destructive">
+            <Button onClick={clearAll} variant="destructive" disabled={rows.length === 0}>
               <X className="mr-2 h-4 w-4" />
               Limpar Tudo
             </Button>
@@ -154,8 +154,8 @@ export function Calculator() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.length > 0 ? rows.map(row => (
-                  <TableRow key={row.id} className="hover:bg-[#E3F2FD]">
+                {calculatedRows.length > 0 ? calculatedRows.map(row => (
+                  <TableRow key={row.id} className="hover:bg-accent/50">
                     <TableCell>
                       <Select value={row.type} onValueChange={(value) => handleRowChange(row.id, 'type', value)}>
                         <SelectTrigger>
@@ -184,10 +184,10 @@ export function Calculator() {
                         placeholder="0,00"
                       />
                     </TableCell>
-                    <TableCell className="font-semibold text-lg">{formatCurrency(row.valorCalculado)}</TableCell>
+                    <TableCell className="font-semibold text-lg">{formatCurrency(row.valorCalculado || 0)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end items-center gap-2">
-                         <Button size="icon" variant="ghost" onClick={() => handleCopyValue(row.valorCalculado)} className="text-orange-500 hover:text-orange-600 hover:bg-orange-100">
+                         <Button size="icon" variant="ghost" onClick={() => handleCopyValue(row.valorCalculado || 0)} className="text-orange-500 hover:text-orange-600 hover:bg-orange-100">
                           <Copy className="h-4 w-4" />
                         </Button>
                         <Button size="icon" variant="ghost" onClick={() => removeRow(row.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">

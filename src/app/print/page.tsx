@@ -3,7 +3,6 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { PrintData } from '@/lib/types';
-import { AlertCircle, Building, PlusSquare } from 'lucide-react';
 import './print.css';
 
 function PrintContent() {
@@ -37,58 +36,53 @@ function PrintContent() {
             </header>
 
             <main>
-                <div className="card summary-card">
-                    <h2 className="card-title">Resumo do Cálculo</h2>
-                    <div className="summary-grid">
-                        <div>
-                            <span>Valor do CUB Utilizado:</span>
-                            <strong>R$ {data.cub}</strong>
+                {data.rows.filter(row => (row.valorCalculado ?? 0) > 0).map(row => (
+                    <div key={row.id} className="card calculation-card">
+                        <div className="card-header">
+                            <h3 className="card-title">Averbação — Construção Nº: {row.numeroConstrucao || 'Não informado'}</h3>
                         </div>
-                        <div className="total-value">
-                            <span>Valor Total Calculado:</span>
-                            <strong>{data.totalCalculadoFmt}</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="card details-card">
-                    <h2 className="card-title">Detalhes das Averbações</h2>
-                    {data.rows.filter(row => (row.valorCalculado ?? 0) > 0).map(row => (
-                        <div key={row.id} className="detail-item">
-                            <div className="item-header">
-                                {row.type === 'Construção Nova' ? <Building className="icon"/> : <PlusSquare className="icon" />}
-                                <h3>{row.type}</h3>
+                        <div className="details-grid">
+                            <div className="detail-item">
+                                <span className="label">Tipo de Averbação</span>
+                                <span className="value">{row.type}</span>
                             </div>
-                            <div className="item-grid">
-                                <div><span>Área Anterior:</span> {row.areaAnterior || '0,00'} m²</div>
-                                <div><span>Área Atual:</span> {row.areaAtual} m²</div>
-                                <div><span>Valor Calculado:</span> <strong>{row.valorCalculadoFmt}</strong></div>
+                            <div className="detail-item">
+                                <span className="label">Área Anterior</span>
+                                <span className="value">{row.areaAnterior || '0,00'} m²</span>
+                            </div>
+                             <div className="detail-item">
+                                <span className="label">Área Atual</span>
+                                <span className="value">{row.areaAtual} m²</span>
                             </div>
                         </div>
-                    ))}
-                </div>
-
-                <div className="card formula-card">
-                    <h2 className="card-title">Fórmulas Aplicadas</h2>
-                    <div className="formula-item">
-                        <h4>Construção Nova</h4>
-                        <p><code>Área Atual × Valor do CUB</code></p>
+                        <div className="calculation-details">
+                            <div className="detail-item">
+                                <span className="label">CUB Aplicado</span>
+                                <span className="value">R$ {data.cub}</span>
+                            </div>
+                            <div className="detail-item">
+                                <span className="label">Fórmula Aplicada</span>
+                                <code className="value formula">
+                                    {row.type === 'Construção Nova' 
+                                        ? `Área Atual × CUB`
+                                        : `(Área Atual - Área Anterior) × CUB`
+                                    }
+                                </code>
+                            </div>
+                            <div className="detail-item result">
+                                <span className="label">Valor Calculado</span>
+                                <span className="value"><strong>{row.valorCalculadoFmt}</strong></span>
+                            </div>
+                        </div>
                     </div>
-                    <div className="formula-item">
-                        <h4>Acréscimo</h4>
-                        <p><code>(Área Atual - Área Anterior) × Valor do CUB</code></p>
-                    </div>
-                </div>
-
+                ))}
+                
                 <div className="card-note">
-                     <AlertCircle className="icon" />
-                    <div>
-                        <h4 className="note-title">Observações Importantes</h4>
-                        <ul className="note-list">
-                            <li>O cálculo acima não possui valor legal. Trata-se apenas de uma ferramenta de auxílio na elaboração de contas.</li>
-                            <li>Verifique se o valor do CUB está atualizado, correspondendo ao mês vigente.</li>
-                        </ul>
-                    </div>
+                    <h4 className="note-title">Observações Importantes</h4>
+                    <ul className="note-list">
+                        <li>O cálculo acima não possui valor legal. Trata-se apenas de uma ferramenta de auxílio na elaboração de contas.</li>
+                        <li>Verifique se o valor do CUB está atualizado, correspondendo ao mês vigente.</li>
+                    </ul>
                 </div>
             </main>
 

@@ -60,7 +60,7 @@ export function Calculator() {
   };
 
   const addRow = () => {
-    setRows(prevRows => [...prevRows, { id: crypto.randomUUID(), type: 'Construção Nova', areaAnterior: '', areaAtual: '' }]);
+    setRows(prevRows => [...prevRows, { id: crypto.randomUUID(), numeroConstrucao: '', type: 'Construção Nova', areaAnterior: '', areaAtual: '' }]);
   };
 
   const removeRow = (id: string) => {
@@ -96,11 +96,12 @@ export function Calculator() {
     return clean;
   };
   
-  const totalCalculado = useMemo(() => {
-    return calculatedRows.reduce((acc, row) => acc + (row.valorCalculado || 0), 0);
-  }, [calculatedRows]);
+  const sanitizeNumeroConstrucao = (value: string) => {
+    return value.replace(/[^A-Za-z0-9\/-]/g, '');
+  };
 
   const handleOpenPrint = () => {
+    const totalCalculado = calculatedRows.reduce((acc, row) => acc + (row.valorCalculado || 0), 0);
     if (cubValue <= 0) {
       toast({ title: "Impressão Bloqueada", description: "Salve um valor de CUB válido para poder imprimir.", variant: "destructive" });
       return;
@@ -115,8 +116,7 @@ export function Calculator() {
         ...row,
         valorCalculadoFmt: formatCurrency(row.valorCalculado || 0)
       })),
-      cub,
-      totalCalculadoFmt: formatCurrency(totalCalculado)
+      cub
     };
     
     const params = new URLSearchParams();
@@ -187,7 +187,8 @@ export function Calculator() {
             <Table>
               <TableHeader className="bg-muted">
                 <TableRow>
-                  <TableHead className="w-[200px]">Tipo</TableHead>
+                  <TableHead className="min-w-[150px]">Nº da Construção</TableHead>
+                  <TableHead className="min-w-[200px]">Tipo</TableHead>
                   <TableHead>Área Anterior (m²)</TableHead>
                   <TableHead>Área Atual (m²)</TableHead>
                   <TableHead>Valor Calculado (R$)</TableHead>
@@ -197,6 +198,17 @@ export function Calculator() {
               <TableBody>
                 {calculatedRows.length > 0 ? calculatedRows.map((row, index) => (
                   <TableRow key={`${row.id}-${index}`} className="hover:bg-accent/10">
+                    <TableCell>
+                      <Input
+                        type="text"
+                        value={row.numeroConstrucao}
+                        onChange={(e) => {
+                          const value = sanitizeNumeroConstrucao(e.target.value);
+                          handleRowChange(row.id, 'numeroConstrucao', value);
+                        }}
+                        placeholder="Ex: 12-A"
+                      />
+                    </TableCell>
                     <TableCell>
                       <Select value={row.type} onValueChange={(value) => handleRowChange(row.id, 'type', value)}>
                         <SelectTrigger>
@@ -245,18 +257,12 @@ export function Calculator() {
                   </TableRow>
                 )) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">Nenhuma linha adicionada. Clique em "Adicionar Linha".</TableCell>
-  
+                    <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">Nenhuma linha adicionada. Clique em "Adicionar Linha".</TableCell>
                   </TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
-           {totalCalculado > 0 && (
-            <div className="mt-6 text-right">
-              <p className="text-lg font-bold">Total Geral: {formatCurrency(totalCalculado)}</p>
-            </div>
-          )}
         </CardContent>
       </Card>
 

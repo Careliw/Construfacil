@@ -1,5 +1,6 @@
 export interface AverbacaoRow {
   id: string;
+  numeroConstrucao: string;
   type: 'Construção Nova' | 'Acréscimo';
   areaAnterior: string;
   areaAtual: string;
@@ -10,5 +11,4 @@ export interface AverbacaoRow {
 export interface PrintData {
   rows: AverbacaoRow[];
   cub: string;
-  totalCalculadoFmt: string;
 }

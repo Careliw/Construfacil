@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Save, Plus, Trash2, X, Copy, AlertCircle, Printer } from 'lucide-react';
+import { Save, Plus, Trash2, X, Copy, AlertCircle, Printer, Layers } from 'lucide-react';
 
 const CUB_STORAGE_KEY = 'construfacil_cub';
 
@@ -82,18 +82,48 @@ export function Calculator() {
     navigator.clipboard.writeText(value.toFixed(2));
     toast({ title: "Copiado!", description: `Valor R$ ${value.toFixed(2)} copiado para a área de transferência.` });
   };
+  
+  const handleDuplicateAreas = (currentRowId: string, rowIndex: number) => {
+    if (rowIndex === 0) {
+      toast({ title: "Ação Bloqueada", description: "Não há linha anterior para duplicar as áreas.", variant: "destructive" });
+      return;
+    }
+    const previousRow = rows[rowIndex - 1];
+    setRows(prevRows =>
+      prevRows.map(row => {
+        if (row.id === currentRowId) {
+          return {
+            ...row,
+            areaAnterior: previousRow.areaAnterior,
+            areaAtual: previousRow.areaAtual,
+          };
+        }
+        return row;
+      })
+    );
+     toast({ title: "Áreas Duplicadas", description: "Os valores de área da linha anterior foram copiados." });
+  };
 
   const formatCurrency = (value: number) => {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
-
+  
   const sanitizeAreaInput = (value: string) => {
+    // Remove caracteres inválidos, exceto números e vírgula
     let clean = value.replace(/[^0-9,]/g, '');
-    clean = clean.replace(/(,.*),/g, '$1');
-    clean = clean.replace(/^(\d+),(.*)$/g, (match, intPart, decPart) => {
-      return intPart + ',' + decPart.substring(0, 3);
-    });
-    return clean;
+    
+    // Garante que haja apenas uma vírgula
+    const parts = clean.split(',');
+    if (parts.length > 2) {
+      clean = parts[0] + ',' + parts.slice(1).join('');
+    }
+    
+    // Limita a 5 dígitos antes da vírgula e 3 depois
+    const match = clean.match(/^(\d{0,5})(,(\d{0,3}))?/);
+    if (match) {
+      return match[0];
+    }
+    return '';
   };
   
   const sanitizeNumeroConstrucao = (value: string) => {
@@ -135,7 +165,7 @@ export function Calculator() {
 
   return (
     <div className="space-y-8">
-      <Card className="border-2 border-border/70">
+      <Card className="border-2 border-border/70 shadow-lg">
         <CardHeader>
           <CardTitle>Valor do CUB (Custo Unitário Básico)</CardTitle>
           <CardDescription>Insira o valor do CUB para o mês vigente e salve para usar nos cálculos.</CardDescription>
@@ -153,7 +183,7 @@ export function Calculator() {
                 className="text-lg"
               />
             </div>
-            <Button onClick={handleSaveCub} className="w-full sm:w-auto bg-primary text-primary-foreground">
+            <Button onClick={handleSaveCub} className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90">
               <Save className="mr-2 h-4 w-4" />
               Salvar CUB
             </Button>
@@ -161,31 +191,31 @@ export function Calculator() {
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border/70">
+      <Card className="border-2 border-border/70 shadow-lg">
         <CardHeader className='flex-row items-center justify-between'>
           <div>
             <CardTitle>Lançamento de Averbações</CardTitle>
             <CardDescription>Adicione, remova e preencha as informações de cada averbação.</CardDescription>
           </div>
-          <Button onClick={handleOpenPrint} variant="outline" className="shrink-0">
+          <Button onClick={handleOpenPrint} variant="outline" className="shrink-0 hover:bg-accent hover:text-accent-foreground">
             <Printer className="mr-2 h-4 w-4" />
             Imprimir Cálculo
           </Button>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2 mb-4">
-            <Button onClick={addRow} className="bg-primary text-primary-foreground">
+            <Button onClick={addRow} className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="mr-2 h-4 w-4" />
               Adicionar Linha
             </Button>
-            <Button onClick={clearAll} variant="destructive" disabled={rows.length === 0}>
+            <Button onClick={clearAll} variant="destructive" disabled={rows.length === 0} className="hover:bg-destructive/90">
               <X className="mr-2 h-4 w-4" />
               Limpar Tudo
             </Button>
           </div>
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted">
+              <TableHeader className="bg-muted/60">
                 <TableRow>
                   <TableHead className="min-w-[150px]">Nº da Construção</TableHead>
                   <TableHead className="min-w-[200px]">Tipo</TableHead>
@@ -197,7 +227,7 @@ export function Calculator() {
               </TableHeader>
               <TableBody>
                 {calculatedRows.length > 0 ? calculatedRows.map((row, index) => (
-                  <TableRow key={`${row.id}-${index}`} className="hover:bg-accent/10">
+                  <TableRow key={row.id} className="hover:bg-muted/50">
                     <TableCell>
                       <Input
                         type="text"
@@ -229,7 +259,8 @@ export function Calculator() {
                           handleRowChange(row.id, 'areaAnterior', value);
                         }}
                         disabled={row.type !== 'Acréscimo'}
-                        placeholder="0,00"
+                        placeholder="0,000"
+                        maxLength={9}
                       />
                     </TableCell>
                     <TableCell>
@@ -240,16 +271,20 @@ export function Calculator() {
                           const value = sanitizeAreaInput(e.target.value);
                           handleRowChange(row.id, 'areaAtual', value);
                         }}
-                        placeholder="0,00"
+                        placeholder="0,000"
+                        maxLength={9}
                       />
                     </TableCell>
                     <TableCell className="font-semibold text-lg">{formatCurrency(row.valorCalculado || 0)}</TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end items-center gap-2">
-                         <Button size="icon" variant="ghost" onClick={() => handleCopyValue(row.valorCalculado || 0)} className="text-accent hover:text-accent-foreground hover:bg-accent/90">
+                      <div className="flex justify-end items-center gap-1">
+                        <Button size="icon" variant="ghost" onClick={() => handleDuplicateAreas(row.id, index)} className="text-blue-600 hover:text-blue-800 hover:bg-blue-100" title="Duplicar áreas da linha anterior">
+                          <Layers className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" onClick={() => handleCopyValue(row.valorCalculado || 0)} className="text-accent hover:text-accent-foreground hover:bg-accent/90" title="Copiar valor">
                           <Copy className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="ghost" onClick={() => removeRow(row.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                        <Button size="icon" variant="ghost" onClick={() => removeRow(row.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive/90" title="Remover linha">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>

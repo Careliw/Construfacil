@@ -9,27 +9,27 @@ const helpSteps = [
   {
     number: 1,
     text: 'Primeiro, insira o valor atualizado do CUB e clique em "Salvar CUB". Este valor é essencial para todos os cálculos.',
-    position: 'top-[12%] left-[5%]',
+    position: 'top-[18%] left-[5%]',
   },
   {
     number: 2,
     text: 'Use os botões para "Adicionar Linha" para cada averbação ou "Limpar Tudo" para recomeçar.',
-    position: 'top-[35%] left-[5%]',
+    position: 'top-[42%] left-[5%]',
   },
   {
     number: 3,
     text: 'Para cada linha, selecione o "Tipo" de averbação. Se for "Acréscimo", o campo "Área Anterior" será habilitado.',
-    position: 'top-[70%] left-[2%]',
+    position: 'top-[60%] left-[2%]',
   },
   {
     number: 4,
     text: 'Preencha as áreas. O "Valor Calculado" aparecerá automaticamente.',
-    position: 'top-[70%] left-[38%]',
+    position: 'top-[60%] left-[38%]',
   },
   {
     number: 5,
     text: 'O valor final é exibido aqui. Use os botões de ação para copiar o valor de uma linha ou para removê-la.',
-    position: 'top-[70%] right-[2%]',
+    position: 'top-[60%] right-[2%]',
   },
 ];
 

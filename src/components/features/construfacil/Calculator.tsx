@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Save, Plus, Trash2, X, Copy } from 'lucide-react';
+import { Save, Plus, Trash2, X, Copy, AlertCircle } from 'lucide-react';
 
 const CUB_STORAGE_KEY = 'construfacil_cub';
 
@@ -88,17 +88,11 @@ export function Calculator() {
   };
 
   const sanitizeAreaInput = (value: string) => {
-    // remove caracteres inválidos
     let clean = value.replace(/[^0-9,]/g, '');
-
-    // impedir mais de uma vírgula
     clean = clean.replace(/(,.*),/g, '$1');
-
-    // limitar a parte decimal a no máximo 3 dígitos
     clean = clean.replace(/^(\d+),(.*)$/g, (match, intPart, decPart) => {
       return intPart + ',' + decPart.substring(0, 3);
     });
-
     return clean;
   };
 
@@ -113,7 +107,7 @@ export function Calculator() {
 
   return (
     <div className="space-y-8">
-      <Card>
+      <Card className="border-2 border-border/70">
         <CardHeader>
           <CardTitle>Valor do CUB (Custo Unitário Básico)</CardTitle>
           <CardDescription>Insira o valor do CUB para o mês vigente e salve para usar nos cálculos.</CardDescription>
@@ -131,7 +125,7 @@ export function Calculator() {
                 className="text-lg"
               />
             </div>
-            <Button onClick={handleSaveCub} className="w-full sm:w-auto bg-[#4CAF50] hover:bg-[#43A047] text-white">
+            <Button onClick={handleSaveCub} className="w-full sm:w-auto bg-primary text-primary-foreground">
               <Save className="mr-2 h-4 w-4" />
               Salvar CUB
             </Button>
@@ -139,14 +133,14 @@ export function Calculator() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-2 border-border/70">
         <CardHeader>
           <CardTitle>Lançamento de Averbações</CardTitle>
           <CardDescription>Adicione, remova e preencha as informações de cada averbação.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2 mb-4">
-            <Button onClick={addRow} className="bg-[#2196F3] hover:bg-[#1E88E5] text-white">
+            <Button onClick={addRow} className="bg-primary text-primary-foreground">
               <Plus className="mr-2 h-4 w-4" />
               Adicionar Linha
             </Button>
@@ -168,7 +162,7 @@ export function Calculator() {
               </TableHeader>
               <TableBody>
                 {calculatedRows.length > 0 ? calculatedRows.map((row, index) => (
-                  <TableRow key={`${row.id}-${index}`} className="hover:bg-accent/50">
+                  <TableRow key={`${row.id}-${index}`} className="hover:bg-accent/10">
                     <TableCell>
                       <Select value={row.type} onValueChange={(value) => handleRowChange(row.id, 'type', value)}>
                         <SelectTrigger>
@@ -206,7 +200,7 @@ export function Calculator() {
                     <TableCell className="font-semibold text-lg">{formatCurrency(row.valorCalculado || 0)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end items-center gap-2">
-                         <Button size="icon" variant="ghost" onClick={() => handleCopyValue(row.valorCalculado || 0)} className="text-orange-500 hover:text-orange-600 hover:bg-orange-100">
+                         <Button size="icon" variant="ghost" onClick={() => handleCopyValue(row.valorCalculado || 0)} className="text-accent hover:text-accent-foreground hover:bg-accent/90">
                           <Copy className="h-4 w-4" />
                         </Button>
                         <Button size="icon" variant="ghost" onClick={() => removeRow(row.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
@@ -227,15 +221,16 @@ export function Calculator() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-            <CardTitle>Observações</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground space-y-2">
-            <p>• O cálculo acima não possui valor legal. Trata-se apenas de uma ferramenta de auxílio na elaboração de contas.</p>
-            <p>• Verifique se o valor do CUB está atualizado correspondendo ao mês vigente.</p>
-        </CardContent>
-      </Card>
+      <div className="dashboard-note flex items-start gap-4">
+        <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+        <div>
+            <h4 className="font-bold">Observações Importantes</h4>
+            <ul className="list-disc pl-5 mt-2 space-y-1 text-sm">
+                <li>O cálculo acima não possui valor legal. Trata-se apenas de uma ferramenta de auxílio na elaboração de contas.</li>
+                <li>Verifique se o valor do CUB está atualizado, correspondendo ao mês vigente.</li>
+            </ul>
+        </div>
+      </div>
     </div>
   );
 }

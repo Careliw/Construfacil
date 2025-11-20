@@ -11,7 +11,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         <Calculator />
       </div>
-      <Button asChild size="icon" className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-[#2196F3] hover:bg-[#1E88E5]">
+      <Button asChild size="icon" className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90">
         <Link href="/ajuda">
           <HelpCircle className="h-7 w-7" />
           <span className="sr-only">Página de Ajuda</span>

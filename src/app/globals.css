@@ -14,19 +14,19 @@ body {
     --card-foreground: 0 0% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
-    --primary: 207 90% 54%; /* #2196F3 */
+    --primary: 142 71% 45%; /* #4CAF50 */
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 94%; /* #F0F0F0 */
     --muted-foreground: 0 0% 45.1%;
-    --accent: 206 91% 95%; /* #E3F2FD */
-    --accent-foreground: 207 90% 40%;
+    --accent: 34 100% 50%; /* #FF9800 */
+    --accent-foreground: 0 0% 98%;
     --destructive: 4 90% 58%; /* #F44336 */
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 87%; /* #DDDDDD */
     --input: 0 0% 87%;
-    --ring: 207 90% 54%;
+    --ring: 142 71% 45%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -49,19 +49,19 @@ body {
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 207 90% 54%;
+    --primary: 142 71% 45%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --accent: 34 100% 50%;
     --accent-foreground: 0 0% 98%;
     --destructive: 4 90% 58%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 207 90% 54%;
+    --ring: 142 71% 45%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -84,5 +84,38 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .dashboard-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #2196F3, #1E88E5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .dashboard-note {
+    background: #fff3cd;
+    border-left: 5px solid #ffca2c;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #664d03;
+    margin-top: 10px;
+    animation: pulseNote 2.5s infinite;
+  }
+
+  @keyframes pulseNote {
+    0% { box-shadow: 0 0 0 0 rgba(255, 202, 44, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 202, 44, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 202, 44, 0); }
+  }
+
+  .dark .dashboard-note {
+    background: #332701;
+    color: #ffefb5;
+    border-left-color: #ffca2c;
   }
 }

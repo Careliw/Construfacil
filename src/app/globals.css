@@ -91,29 +91,19 @@ body {
   .dashboard-title {
     font-size: 2.25rem;
     font-weight: 700;
-    background: linear-gradient(90deg, #2196F3, #1E88E5);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: hsl(var(--foreground));
   }
 
-  .dashboard-note {
+  .important-note {
     background: #fff3cd;
     border-left: 5px solid #ffca2c;
-    padding: 15px;
-    border-radius: 6px;
-    font-size: 0.95rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
     color: #664d03;
-    margin-top: 10px;
-    animation: pulseNote 2.5s infinite;
+    margin-top: 1rem;
   }
-
-  @keyframes pulseNote {
-    0% { box-shadow: 0 0 0 0 rgba(255, 202, 44, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 202, 44, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 202, 44, 0); }
-  }
-
-  .dark .dashboard-note {
+  
+  .dark .important-note {
     background: #332701;
     color: #ffefb5;
     border-left-color: #ffca2c;

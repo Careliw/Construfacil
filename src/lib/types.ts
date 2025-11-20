@@ -11,7 +11,3 @@ export interface PrintData {
   rows: AverbacaoRow[];
   cub: string;
 }
-
-export interface UserConfig {
-  name: string;
-}

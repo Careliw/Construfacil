@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -9,21 +8,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Save, Plus, X, AlertCircle, Printer, Link as LinkIcon } from 'lucide-react';
+import { Save, Plus, Trash2, Printer, Link as LinkIcon, AlertCircle, Copy, Layers } from 'lucide-react';
 import { CalculatorRow } from './CalculatorRow';
+import { sanitizeNumericInput } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const CUB_STORAGE_KEY = 'construfacil_cub';
 const ROWS_STORAGE_KEY = 'construfacil_rows';
 
-const sanitizeNumericInput = (value: string) => {
-    let clean = value.replace(/[^0-9,]/g, '');
-    const parts = clean.split(',');
-    if (parts.length > 2) {
-      clean = parts[0] + ',' + parts.slice(1).join('');
-    }
-    const match = clean.match(/^(\d{0,5})(,(\d{0,3}))?/);
-    return match ? match[0] : '';
-};
+const createNewRow = (): AverbacaoRow => ({
+    id: crypto.randomUUID(),
+    numeroConstrucao: '',
+    type: 'Construção Nova',
+    areaAnterior: '',
+    areaAtual: '',
+});
 
 export function Calculator() {
   const [cub, setCub] = useState('');
@@ -43,24 +42,31 @@ export function Calculator() {
         if (Array.isArray(parsedRows) && parsedRows.length > 0) {
           setRows(parsedRows);
         } else {
-          setRows([{ id: crypto.randomUUID(), numeroConstrucao: '', type: 'Construção Nova', areaAnterior: '', areaAtual: '' }]);
+          setRows([createNewRow()]);
         }
       } else {
-        addRow();
+        setRows([createNewRow()]);
       }
     } catch (error) {
-      console.error("Failed to load data from localStorage", error);
-      addRow();
+      console.error("Falha ao carregar dados do localStorage", error);
+      setRows([createNewRow()]);
     }
   }, []);
 
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem(ROWS_STORAGE_KEY, JSON.stringify(rows));
+      try {
+        localStorage.setItem(ROWS_STORAGE_KEY, JSON.stringify(rows));
+      } catch (error) {
+        console.error("Falha ao salvar dados no localStorage", error);
+      }
     }
   }, [rows, isClient]);
 
-  const cubValue = useMemo(() => parseFloat(cub.replace(',', '.')) || 0, [cub]);
+  const cubValue = useMemo(() => {
+    if (!cub) return 0;
+    return parseFloat(cub.replace(',', '.')) || 0;
+  }, [cub]);
 
   const calculatedRows = useMemo(() => {
     if (cubValue <= 0) return rows.map(row => ({ ...row, valorCalculado: 0 }));
@@ -80,17 +86,17 @@ export function Calculator() {
     });
   }, [rows, cubValue]);
 
-  const handleSaveCub = () => {
+  const handleSaveCub = useCallback(() => {
     if (cubValue <= 0) {
       toast({ title: "Valor Inválido", description: "Por favor, insira um valor de CUB positivo.", variant: "destructive" });
       return;
     }
     localStorage.setItem(CUB_STORAGE_KEY, cub);
-    toast({ title: "Sucesso", description: "Valor do CUB salvo no navegador!" });
-  };
+    toast({ title: "Sucesso", description: `CUB de R$ ${cub} salvo no navegador!` });
+  }, [cub, cubValue, toast]);
 
   const addRow = useCallback(() => {
-    setRows(prevRows => [...prevRows, { id: crypto.randomUUID(), numeroConstrucao: '', type: 'Construção Nova', areaAnterior: '', areaAtual: '' }]);
+    setRows(prevRows => [...prevRows, createNewRow()]);
   }, []);
 
   const removeRow = useCallback((id: string) => {
@@ -104,10 +110,8 @@ export function Calculator() {
   }, [toast]);
   
   const clearAll = useCallback(() => {
-    if (rows.length > 0) {
-      setRows([{ id: crypto.randomUUID(), numeroConstrucao: '', type: 'Construção Nova', areaAnterior: '', areaAtual: '' }]);
-      toast({ title: "Tabela Limpa", description: "Todas as linhas foram removidas e uma nova foi adicionada." });
-    }
+    setRows([createNewRow()]);
+    toast({ title: "Tabela Limpa", description: "Todas as linhas foram removidas e uma nova foi adicionada." });
   }, [toast]);
 
   const handleRowChange = useCallback((id: string, field: keyof Omit<AverbacaoRow, 'id' | 'valorCalculado'>, value: string) => {
@@ -121,8 +125,7 @@ export function Calculator() {
     const sourceRow = rows[sourceRowIndex];
     
     const newRow: AverbacaoRow = {
-      id: crypto.randomUUID(),
-      numeroConstrucao: '',
+      ...createNewRow(),
       type: sourceRow.type,
       areaAnterior: sourceRow.areaAnterior,
       areaAtual: sourceRow.areaAtual,
@@ -135,7 +138,7 @@ export function Calculator() {
     ];
     
     setRows(newRows);
-    toast({ title: "Linha Duplicada", description: "Uma nova linha foi criada com os dados de área da linha original." });
+    toast({ title: "Linha Duplicada", description: "Uma nova linha foi criada abaixo com os mesmos dados de área." });
   }, [rows, toast]);
 
   const handleOpenPrint = () => {
@@ -150,13 +153,18 @@ export function Calculator() {
     }
 
     const data: PrintData = {
-      rows: calculatedRows,
+      rows: calculatedRows.filter(row => (row.valorCalculado ?? 0) > 0),
       cub,
     };
     
     const params = new URLSearchParams();
     params.set('data', JSON.stringify(data));
     window.open(`/print?${params.toString()}`, "_blank");
+  };
+
+  const handleCubInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const sanitizedValue = sanitizeNumericInput(e.target.value, 5, 2);
+    setCub(sanitizedValue);
   };
 
   if (!isClient) {
@@ -180,21 +188,30 @@ export function Calculator() {
             <div className="w-full sm:w-auto flex-grow">
               <div className="flex items-center gap-2 mb-1">
                 <Label htmlFor="cub-input">Valor do CUB (R$)</Label>
-                <a
-                  href="https://sinduscon.org.br/cub/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 cursor-pointer"
-                  title="Consultar CUB no Sinduscon"
-                >
-                  <LinkIcon className="h-4 w-4" />
-                </a>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href="https://sinduscon.org.br/cub/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                        aria-label="Consultar CUB no site do Sinduscon"
+                      >
+                        <LinkIcon className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Consultar site do Sinduscon</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               <Input
                 id="cub-input"
                 type="text"
                 value={cub}
-                onChange={(e) => setCub(sanitizeNumericInput(e.target.value))}
+                onChange={handleCubInputChange}
                 placeholder="Ex: 2500,50"
                 className="text-lg"
               />
@@ -224,8 +241,8 @@ export function Calculator() {
               <Plus className="mr-2 h-4 w-4" />
               Adicionar Linha
             </Button>
-            <Button onClick={clearAll} variant="destructive" disabled={rows.length === 0}>
-              <X className="mr-2 h-4 w-4" />
+            <Button onClick={clearAll} variant="destructive" disabled={rows.length <= 1 && rows.every(r => !r.numeroConstrucao && !r.areaAnterior && !r.areaAtual)}>
+              <Trash2 className="mr-2 h-4 w-4" />
               Limpar Tabela
             </Button>
           </div>
@@ -233,12 +250,12 @@ export function Calculator() {
             <Table>
               <TableHeader className="bg-muted/60">
                 <TableRow>
-                  <TableHead className="min-w-[150px]">Nº da Construção</TableHead>
-                  <TableHead className="min-w-[200px]">Tipo</TableHead>
+                  <TableHead className="w-[180px]">Nº da Construção</TableHead>
+                  <TableHead className="w-[220px]">Tipo de Averbação</TableHead>
                   <TableHead>Área Anterior (m²)</TableHead>
                   <TableHead>Área Atual (m²)</TableHead>
                   <TableHead>Valor Calculado (R$)</TableHead>
-                  <TableHead className="text-right w-[130px]">Ações</TableHead>
+                  <TableHead className="text-right w-[140px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -262,7 +279,7 @@ export function Calculator() {
         </CardContent>
       </Card>
 
-      <div className="dashboard-note flex items-start gap-4">
+      <div className="important-note flex items-start gap-4">
         <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
         <div>
             <h4 className="font-bold">Observações Importantes</h4>

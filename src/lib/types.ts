@@ -1,5 +1,5 @@
 export interface AverbacaoRow {
-  id: number;
+  id: string;
   type: 'Construção Nova' | 'Acréscimo';
   areaAnterior: string;
   areaAtual: string;

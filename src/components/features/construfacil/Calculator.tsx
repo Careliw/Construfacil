@@ -61,10 +61,10 @@ export function Calculator() {
   };
 
   const addRow = () => {
-    setRows(prevRows => [...prevRows, { id: Date.now(), type: 'Construção Nova', areaAnterior: '', areaAtual: '' }]);
+    setRows(prevRows => [...prevRows, { id: crypto.randomUUID(), type: 'Construção Nova', areaAnterior: '', areaAtual: '' }]);
   };
 
-  const removeRow = (id: number) => {
+  const removeRow = (id: string) => {
     setRows(prevRows => prevRows.filter(row => row.id !== id));
   };
   
@@ -75,7 +75,7 @@ export function Calculator() {
     }
   };
 
-  const handleRowChange = (id: number, field: keyof Omit<AverbacaoRow, 'id' | 'valorCalculado'>, value: string) => {
+  const handleRowChange = (id: string, field: keyof Omit<AverbacaoRow, 'id' | 'valorCalculado'>, value: string) => {
     setRows(prevRows => prevRows.map(row => (row.id === id ? { ...row, [field]: value } : row)));
   };
 
@@ -154,8 +154,8 @@ export function Calculator() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {calculatedRows.length > 0 ? calculatedRows.map(row => (
-                  <TableRow key={row.id} className="hover:bg-accent/50">
+                {calculatedRows.length > 0 ? calculatedRows.map((row, index) => (
+                  <TableRow key={`${row.id}-${index}`} className="hover:bg-accent/50">
                     <TableCell>
                       <Select value={row.type} onValueChange={(value) => handleRowChange(row.id, 'type', value)}>
                         <SelectTrigger>

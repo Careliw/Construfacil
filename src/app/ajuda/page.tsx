@@ -82,18 +82,18 @@ export default function AjudaPage() {
                 </CardHeader>
                 <CardContent>
                     <Accordion type="single" collapsible className="w-full">
-                        <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden shadow-inner border">
+                        <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden shadow-inner border bg-muted/20">
                             {helpImage && (
                                 <Image
                                     src={helpImage.imageUrl}
                                     alt={helpImage.description}
                                     fill
-                                    className="object-cover object-top"
+                                    className="object-contain"
                                     data-ai-hint={helpImage.imageHint}
                                     priority
                                 />
                             )}
-                            <div className="absolute inset-0 bg-black/5">
+                            <div className="absolute inset-0">
                                 {helpSteps.map(step => (
                                     <Step key={step.number} {...step} />
                                 ))}

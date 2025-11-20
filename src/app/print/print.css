@@ -8,94 +8,76 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.container {
+.print-button {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    background: #2d7eff;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    z-index: 100;
+}
+
+.print-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.print-container {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
     background-color: #ffffff;
 }
 
-.header {
+.print-container header {
     text-align: center;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0;
     border-bottom: 1px solid #dee2e6;
     padding-bottom: 15px;
     margin-bottom: 25px;
 }
 
-.title {
-    font-size: 1.5em;
-    font-weight: 600;
-    color: #343a40;
-    margin: 0;
-}
-
-.card {
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
+.cub-info {
+    font-size: 14px;
+    margin-bottom: 25px;
+    padding: 10px;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    background: #f9f9f9;
 }
 
-.calculation-card {
-    page-break-inside: avoid;
+.print-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 35px;
+    font-size: 12px;
 }
 
-.card-header {
-    padding: 12px 18px;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+.print-container table thead {
+    background: #eaeaea;
 }
 
-.card-title {
-    font-size: 1.15em;
-    font-weight: 600;
-    margin: 0;
+.print-container table th,
+.print-container table td {
+    border: 1px solid #cccccc;
+    padding: 6px 8px;
+    text-align: left;
 }
 
-.details-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    padding: 18px;
-}
-
-.calculation-details {
-    padding: 18px;
-    border-top: 1px dashed #ced4da;
-}
-
-.detail-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.detail-item .label {
-    font-size: 0.85em;
-    color: #6c757d;
-    font-weight: 500;
-}
-
-.detail-item .value {
-    font-size: 1em;
-    font-weight: 400;
-}
-
-.detail-item.result .value strong {
-    font-size: 1.2em;
-    font-weight: 700;
-    color: #198754;
-}
-
-.formula {
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-    background-color: #e9ecef;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.9em !important;
+.print-container table td.formula {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    background: #f3f3f3;
 }
 
 .card-note {
@@ -106,6 +88,7 @@ body {
     color: #664d03;
     font-size: 0.85em;
     page-break-inside: avoid;
+    margin-top: 20px;
 }
 
 .note-title {
@@ -120,13 +103,13 @@ body {
     margin: 0;
 }
 
-.footer {
+.print-container footer {
+    margin-top: 40px;
     text-align: center;
-    margin-top: 30px;
-    padding-top: 15px;
+    font-size: 11px;
+    color: #555;
     border-top: 1px solid #dee2e6;
-    font-size: 0.8em;
-    color: #6c757d;
+    padding-top: 15px;
 }
 
 .error-card {
@@ -137,6 +120,7 @@ body {
     padding: 20px;
 }
 
+
 @media print {
     @page {
         size: auto;
@@ -144,27 +128,61 @@ body {
     }
 
     body {
-        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+        background: #ffffff !important;
         font-size: 9pt;
     }
 
-    .container {
+    .print-button {
+        display: none !important;
+    }
+
+    .print-container {
         max-width: 100%;
+        width: 100%;
         margin: 0;
         padding: 0;
         box-shadow: none;
         border: none;
-    }
-
-    .header, .footer {
-        text-align: center;
-    }
-
-    .header {
-        border-bottom: 1px solid #000;
+        page-break-inside: avoid;
     }
     
-    .footer {
+    .print-container header {
+      font-size: 16px;
+      border-bottom: 1px solid #000;
+    }
+
+    .cub-info {
+        text-align: left;
+        width: auto;
+        margin: 20px 0;
+    }
+
+    .print-container table {
+        font-size: 9pt;
+    }
+
+    .print-container table th,
+    .print-container table td {
+      border: 1px solid #999;
+    }
+
+    .print-container table thead {
+        background: #f0f0f0 !important;
+    }
+    
+    .print-container table td.formula {
+      background: #f9f9f9 !important;
+    }
+    
+    .card-note {
+        background: #f1f1f1 !important;
+        border-color: #ccc !important;
+        color: #000 !important;
+    }
+
+    .print-container footer {
       position: fixed;
       bottom: 0;
       left: 0;
@@ -174,31 +192,7 @@ body {
       padding: 5px 0;
       font-size: 8pt;
     }
-    
-    .card {
-        border: 1px solid #ccc;
-        box-shadow: none;
-    }
 
-    .card-header {
-        background-color: #f1f1f1 !important;
-    }
-
-    .card-note {
-        background: #f1f1f1 !important;
-        border-color: #ccc !important;
-        color: #000 !important;
-    }
-
-    .formula {
-        background: #e0e0e0 !important;
-        color: #000 !important;
-    }
-
-    .detail-item.result .value strong {
-        color: #000 !important;
-    }
-    
     * {
        -webkit-print-color-adjust: exact !important;
        print-color-adjust: exact !important;

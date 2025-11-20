@@ -40,8 +40,8 @@ function PrintContent() {
                     const areaAtual = parseFloat(item.areaAtual.replace(',', '.')) || 0;
 
                     const formula = item.type === "Construção Nova"
-                      ? `${item.areaAtual} × ${cub.toLocaleString("pt-BR")}`
-                      : `(${item.areaAtual} - ${item.areaAnterior}) × ${cub.toLocaleString("pt-BR")}`;
+                      ? `${item.areaAtual.replace('.',',')} × ${cub.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
+                      : `(${item.areaAtual.replace('.',',')} - ${item.areaAnterior.replace('.',',')}) × ${cub.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
                     
                     const valor = item.valorCalculado || 0;
 
@@ -107,6 +107,12 @@ function PrintContent() {
                         <li>Verifique se o valor do CUB está atualizado, correspondendo ao mês vigente.</li>
                     </ul>
                 </div>
+                
+                <div className="w-full border-t border-neutral-300 mt-10 mb-3 opacity-60"></div>
+                <footer className="w-full text-center text-[10px] text-neutral-400 select-none leading-tight">
+                    <div>Desenvolvido por Wesley Careli · v1.1.0</div>
+                    <div className="text-neutral-400/80">Todos os direitos reservados.</div>
+                </footer>
             </div>
         </>
     );
@@ -114,7 +120,7 @@ function PrintContent() {
 
 export default function PrintPage() {
   return (
-    <Suspense fallback={<div>Carregando...</div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center">Carregando...</div>}>
       <PrintContent />
     </Suspense>
   );

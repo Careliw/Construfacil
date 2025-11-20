@@ -5,7 +5,6 @@ export interface AverbacaoRow {
   areaAnterior: string;
   areaAtual: string;
   valorCalculado?: number;
-  valorCalculadoFmt?: string;
 }
 
 export interface PrintData {

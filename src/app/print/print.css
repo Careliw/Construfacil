@@ -32,7 +32,7 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 2px solid #f0f0f0;
 }
 
 .logo-title {
@@ -42,8 +42,8 @@ body {
 }
 
 .logo-icon {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     color: #4a5568;
 }
 
@@ -54,27 +54,31 @@ body {
 }
 
 .title-group .subtitle {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: #718096;
-}
-
-.report-title h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #4a5568;
-    text-align: right;
-    margin-top: 4px;
 }
 
 .print-main {
     flex-grow: 1;
     padding-top: 1.5rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.75rem;
+}
+
+.info-section, .calculation-section {
+    margin-bottom: 1.5rem;
 }
 
 .info-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 6px 0;
 }
 
@@ -86,29 +90,30 @@ body {
     text-align: right;
 }
 
-.calculation-group {
-    margin-top: 1rem;
+.info-item-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 6px 0;
+    font-size: 0.8rem;
+    color: #666;
 }
+
+.calculation-group {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.calculation-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
 
 .separator-full {
     border-top: 1px solid #ccc;
     margin: 1rem 0;
-}
-.separator-full-dashed {
-    border-top: 1px dashed #ddd;
-    margin: 1.5rem 0;
-}
-
-.separator-partial {
-    border-top: 1px solid #eee;
-    margin: 0.75rem 0 0.75rem 50%;
-}
-
-.result-item {
-    padding-top: 0;
-}
-.result-item span {
-    font-size: 0.9rem;
 }
 
 .total-section {
@@ -126,13 +131,13 @@ body {
     font-size: 0.75rem;
 }
 
-.important-note {
-    color: #c53030;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+.notes-section .important-note {
+    font-weight: normal;
+    color: #444;
+    margin-bottom: 0.25rem;
 }
 
-.secondary-note {
+.notes-section .secondary-note {
     color: #718096;
 }
 

@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import type { PrintData } from '@/lib/types';
 import { formatCurrency, formatArea } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Building, Printer } from 'lucide-react';
+import { Printer } from 'lucide-react';
+import { ConstrufacilIcon } from './ConstrufacilIcon';
 
 export function PrintContent() {
     const searchParams = useSearchParams();
@@ -34,7 +35,6 @@ export function PrintContent() {
     }
     
     const cubValue = parseFloat(data.cub.replace(',', '.')) || 0;
-    const totalGeral = data.rows.reduce((acc, row) => acc + (row.valorCalculado || 0), 0);
 
     return (
         <>
@@ -48,72 +48,49 @@ export function PrintContent() {
             <div className="print-page">
                 <header className="print-header">
                     <div className="logo-title">
-                        <Building className="logo-icon" />
+                        <ConstrufacilIcon className="logo-icon" />
                         <div className="title-group">
                             <h1 className="main-title">ConstruFacil</h1>
-                            <h2 className="subtitle">Calculadora de Averbação</h2>
+                            <h2 className="subtitle">Confirmação de Cálculo</h2>
                         </div>
-                    </div>
-                    <div className="report-title">
-                        <h3>Memória de Cálculo</h3>
                     </div>
                 </header>
 
                 <main className="print-main">
-                    <div className="info-item">
-                        <span>CUB (Custo Unitário Básico) utilizado:</span>
-                        <span>{formatCurrency(cubValue)}</span>
+                    <div className="info-section">
+                        <h3 className="section-title">Informações Gerais</h3>
+                        <div className="info-item">
+                            <span>Data do Cálculo:</span>
+                            <span>{currentDate}</span>
+                        </div>
+                        <div className="info-item">
+                            <span>Valor do CUB (R$):</span>
+                            <span>{formatCurrency(cubValue, false)}</span>
+                        </div>
                     </div>
                     
                     <div className="separator-full"></div>
 
-                    {data.rows.map((item, index) => {
-                         const formula = item.type === "Construção Nova"
-                         ? `${formatArea(item.areaAtual)} m² × ${formatCurrency(cubValue)}`
-                         : `(${formatArea(item.areaAtual)} m² - ${formatArea(item.areaAnterior)} m²) × ${formatCurrency(cubValue)}`;
+                    <div className="calculation-section">
+                        <h3 className="section-title">Memória de Cálculo</h3>
+                        {data.rows.map((item, index) => {
+                             const formula = item.type === "Construção Nova"
+                             ? `${formatArea(item.areaAtual)} m² × ${formatCurrency(cubValue, false)}`
+                             : `(${formatArea(item.areaAtual)} m² - ${formatArea(item.areaAnterior)} m²) × ${formatCurrency(cubValue, false)}`;
 
-                        return (
-                            <div key={item.id} className="calculation-group">
-                                <div className="info-item">
-                                    <span className='font-semibold'>Item {index + 1}: {item.numeroConstrucao || 'Sem identificação'}</span>
-                                </div>
-                                <div className="info-item">
-                                    <span>Tipo de averbação:</span>
-                                    <span>{item.type}</span>
-                                </div>
-                                {item.type === 'Acréscimo' && (
+                            return (
+                                <div key={item.id} className="calculation-group">
                                     <div className="info-item">
-                                        <span>Área anterior:</span>
-                                        <span>{formatArea(item.areaAnterior)} m²</span>
+                                        <span className='font-semibold'>Item {index + 1}: {item.numeroConstrucao || 'Sem identificação'}</span>
+                                        <span className="font-bold text-lg">{formatCurrency(item.valorCalculado)}</span>
                                     </div>
-                                )}
-                                <div className="info-item">
-                                    <span>Área atual:</span>
-                                    <span>{formatArea(item.areaAtual)} m²</span>
+                                    <div className="info-item-details">
+                                        <span>{item.type}</span>
+                                        <span className='text-sm text-gray-600'>{formula}</span>
+                                    </div>
                                 </div>
-                                <div className="info-item">
-                                    <span>Fórmula do cálculo:</span>
-                                    <span className='text-sm text-gray-600'>{formula}</span>
-                                </div>
-
-                                <div className="separator-partial"></div>
-
-                                <div className="info-item result-item">
-                                    <span>Valor do item:</span>
-                                    <span className="font-bold">{formatCurrency(item.valorCalculado)}</span>
-                                </div>
-                                {index < data.rows.length - 1 && <div className="separator-full-dashed"></div>}
-                            </div>
-                        );
-                    })}
-
-                    <div className="separator-full"></div>
-
-                    <div className="total-section">
-                        <div className="info-item total-item">
-                            <span>Total Geral:</span>
-                            <span className="font-bold text-lg">{formatCurrency(totalGeral)}</span>
-                        </div>
+                            );
+                        })}
                     </div>
                     
                     <div className="notes-section">
@@ -127,7 +104,7 @@ export function PrintContent() {
                 </main>
 
                 <footer className="print-footer">
-                    <span>Calculado em: {currentDate}</span>
+                    <span>ConstruFacil v1.1.0 | Todos os direitos reservados.</span>
                 </footer>
             </div>
         </>

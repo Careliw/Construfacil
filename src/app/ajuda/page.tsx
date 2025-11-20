@@ -17,7 +17,7 @@ export default function AjudaPage() {
     },
     {
       title: "Passo 3: Adicione Linhas de Averbação",
-      description: "Clique em 'Adicionar Linha' para cada obra que deseja calcular (uma construção nova, um acréscimo, etc.)."
+      description: "Clique em 'Adicionar Linha' para cada obra que deseja calcular (uma construção nova, um acréscimo, etc.). Você pode adicionar quantas linhas precisar."
     },
     {
       title: "Passo 4: Preencha os Dados da Obra",
@@ -25,11 +25,19 @@ export default function AjudaPage() {
     },
     {
       title: "Passo 5: Veja o Valor Calculado",
-      description: "O valor final para cada obra aparecerá automaticamente na coluna 'Valor Calculado', baseado na fórmula: (Área Atual - Área Anterior) × CUB."
+      description: (
+        <span>
+          O valor final para cada obra aparecerá automaticamente. As fórmulas são:
+          <br />
+          - <strong>Construção Nova:</strong> Área Atual × CUB
+          <br />
+          - <strong>Acréscimo:</strong> (Área Atual - Área Anterior) × CUB
+        </span>
+      ),
     },
     {
       title: "Passo 6: Utilize as Ações",
-      description: "Use os botões de ação para 'Copiar' o valor calculado ou para 'Excluir' uma linha da tabela."
+      description: "Use os botões de ação para 'Copiar' o valor calculado de uma linha ou para 'Excluir' a linha da tabela."
     }
   ];
 
@@ -45,30 +53,21 @@ export default function AjudaPage() {
         </Button>
       </header>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Como usar a Calculadora de Averbação</CardTitle>
-          <CardDescription>Siga os passos abaixo para realizar seus cálculos de forma simples e correta.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {steps.map((step, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <div className="flex flex-col items-center">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
-                    {index + 1}
-                  </div>
-                  {index < steps.length - 1 && <div className="mt-2 w-px flex-grow bg-border" />}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">{step.title}</h3>
-                  <p className="text-muted-foreground mt-1">{step.description}</p>
-                </div>
+      <div className="space-y-4">
+        {steps.map((step, index) => (
+          <Card key={index} className="bg-card">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                {index + 1}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              <CardTitle className="text-xl">{step.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground pl-12">{step.description}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

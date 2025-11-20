@@ -11,7 +11,6 @@ import { ConstrufacilIcon } from './ConstrufacilIcon';
 export function PrintContent() {
     const searchParams = useSearchParams();
     const dataString = searchParams.get('data');
-    const currentDate = new Date().toLocaleDateString('pt-BR');
 
     const data: PrintData | null = useMemo(() => {
         if (!dataString) return null;
@@ -46,31 +45,7 @@ export function PrintContent() {
             </div>
 
             <div className="print-page">
-                <header className="print-header">
-                    <div className="logo-title">
-                        <ConstrufacilIcon className="logo-icon" />
-                        <div className="title-group">
-                            <h1 className="main-title">ConstruFacil</h1>
-                            <h2 className="subtitle">Confirmação de Cálculo</h2>
-                        </div>
-                    </div>
-                </header>
-
                 <main className="print-main">
-                    <div className="info-section">
-                        <h3 className="section-title">Informações Gerais</h3>
-                        <div className="info-item">
-                            <span>Data do Cálculo:</span>
-                            <span>{currentDate}</span>
-                        </div>
-                        <div className="info-item">
-                            <span>Valor do CUB (R$):</span>
-                            <span>{formatCurrency(cubValue, false)}</span>
-                        </div>
-                    </div>
-                    
-                    <div className="separator-full"></div>
-
                     <div className="calculation-section">
                         <h3 className="section-title">Memória de Cálculo</h3>
                         {data.rows.map((item, index) => {

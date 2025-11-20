@@ -1,48 +1,62 @@
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const helpSteps = [
   {
+    value: 'item-1',
     number: 1,
     text: 'Primeiro, insira o valor atualizado do CUB e clique em "Salvar CUB". Este valor é essencial para todos os cálculos.',
-    position: 'top-[18%] left-[5%]',
+    position: 'top-[22%] left-[30%]',
   },
   {
+    value: 'item-2',
     number: 2,
     text: 'Use os botões para "Adicionar Linha" para cada averbação ou "Limpar Tudo" para recomeçar.',
-    position: 'top-[42%] left-[5%]',
+    position: 'top-[42%] left-[10%]',
   },
   {
+    value: 'item-3',
     number: 3,
     text: 'Para cada linha, selecione o "Tipo" de averbação. Se for "Acréscimo", o campo "Área Anterior" será habilitado.',
-    position: 'top-[60%] left-[2%]',
+    position: 'top-[75%] left-[5%]',
   },
   {
+    value: 'item-4',
     number: 4,
     text: 'Preencha as áreas. O "Valor Calculado" aparecerá automaticamente.',
-    position: 'top-[60%] left-[38%]',
+    position: 'top-[75%] left-[50%]',
   },
   {
+    value: 'item-5',
     number: 5,
     text: 'O valor final é exibido aqui. Use os botões de ação para copiar o valor de uma linha ou para removê-la.',
-    position: 'top-[60%] right-[2%]',
+    position: 'top-[75%] right-[12%]',
   },
 ];
 
-const Step = ({ number, text, position }: { number: number; text: string; position: string; }) => (
+const Step = ({ number, text, value, position }: { number: number; text: string; value: string; position: string; }) => (
   <div className={`absolute ${position} w-52 transform`}>
-      <div className="relative flex items-start gap-3">
-          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-lg shadow-lg">
-              {number}
-          </div>
-          <div className="p-3 bg-card/90 backdrop-blur-sm rounded-lg shadow-lg border border-primary/20">
-              <p className="text-sm text-card-foreground">{text}</p>
-          </div>
-      </div>
+      <AccordionItem value={value} className="border-none">
+          <AccordionTrigger>
+               <div className="relative flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-lg shadow-lg">
+                      {number}
+                  </div>
+              </div>
+          </AccordionTrigger>
+          <AccordionContent>
+              <div className="p-3 bg-card/90 backdrop-blur-sm rounded-lg shadow-lg border border-primary/20">
+                  <p className="text-sm text-card-foreground">{text}</p>
+              </div>
+          </AccordionContent>
+      </AccordionItem>
   </div>
 );
 
@@ -64,26 +78,28 @@ export default function AjudaPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Guia Visual da Calculadora</CardTitle>
-                    <CardDescription>Siga os passos numerados na imagem para aprender a usar a ferramenta.</CardDescription>
+                    <CardDescription>Clique nos números para ver a explicação de cada passo.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden shadow-inner border">
-                        {helpImage && (
-                            <Image
-                                src={helpImage.imageUrl}
-                                alt={helpImage.description}
-                                fill
-                                className="object-cover object-top"
-                                data-ai-hint={helpImage.imageHint}
-                                priority
-                            />
-                        )}
-                        <div className="absolute inset-0 bg-black/5">
-                            {helpSteps.map(step => (
-                                <Step key={step.number} {...step} />
-                            ))}
+                    <Accordion type="single" collapsible className="w-full">
+                        <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden shadow-inner border">
+                            {helpImage && (
+                                <Image
+                                    src={helpImage.imageUrl}
+                                    alt={helpImage.description}
+                                    fill
+                                    className="object-cover object-top"
+                                    data-ai-hint={helpImage.imageHint}
+                                    priority
+                                />
+                            )}
+                            <div className="absolute inset-0 bg-black/5">
+                                {helpSteps.map(step => (
+                                    <Step key={step.number} {...step} />
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    </Accordion>
                 </CardContent>
             </Card>
         </div>
